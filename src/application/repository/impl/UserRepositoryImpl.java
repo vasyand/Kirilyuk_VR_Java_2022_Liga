@@ -1,10 +1,12 @@
 package application.repository.impl;
 
 import application.Application;
+import application.model.Task;
 import application.model.User;
 import application.repository.TaskRepository;
 import application.repository.UserRepository;
 
+import java.io.BufferedWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,6 +36,7 @@ public class UserRepositoryImpl implements UserRepository {
         List<User> users = new ArrayList<>();
         try {
             users = Files.lines(Paths.get(PATH.toURI()))
+                    .filter(s -> !s.isEmpty())
                     .map(this::mapToUser)
                     .peek(u -> u.setTasks(taskRepository.findByUserId(u.getId())))
                     .collect(Collectors.toList());
@@ -45,14 +48,17 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void update(User user) {
+        List<Task> tasks = user.getTasks();
         delete(user.getId());
+        tasks.forEach(taskRepository::save);
         save(user);
     }
 
     @Override
     public void save(User user) {
-        try {
-            Files.writeString(Paths.get(PATH.toURI()), mapToString(user), StandardOpenOption.APPEND);
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PATH.toURI()), StandardOpenOption.APPEND)) {
+            writer.newLine();
+            writer.write(mapToString(user));
         } catch (Exception e) {
             System.out.println("При сохранении что-то пошло не так");
         }

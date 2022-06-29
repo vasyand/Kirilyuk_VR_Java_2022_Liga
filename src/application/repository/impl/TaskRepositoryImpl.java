@@ -5,6 +5,7 @@ import application.model.Task;
 import application.model.TaskStatus;
 import application.repository.TaskRepository;
 
+import java.io.BufferedWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,6 +24,7 @@ public class TaskRepositoryImpl implements TaskRepository {
         List<Task> tasks = new ArrayList<>();
         try {
             tasks = Files.lines(Paths.get(PATH.toURI()))
+                    .filter(s -> !s.isEmpty())
                     .map(this::mapToTask)
                     .collect(Collectors.toList());
         } catch (Exception exception) {
@@ -61,8 +63,9 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public void save(Task task) {
-        try {
-            Files.writeString(Paths.get(PATH.toURI()), mapToString(task), StandardOpenOption.APPEND);
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(PATH.toURI()), StandardOpenOption.APPEND)) {
+            writer.newLine();
+            writer.write(mapToString(task));
         } catch (Exception e) {
             System.out.println("При сохранении что-то пошло не так");
         }
@@ -97,7 +100,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     private String mapToString(Task task) {
-        return task.getId() +
+        return "\n" + task.getId() +
                 "," +
                 task.getTitle() +
                 "," +

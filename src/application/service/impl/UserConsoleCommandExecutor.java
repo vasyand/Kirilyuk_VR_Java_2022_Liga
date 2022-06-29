@@ -49,7 +49,7 @@ public class UserConsoleCommandExecutor implements ConsoleCommandExecutor {
         } else {
             String[] args = command.split(" ");
             String userId = args[0];
-            if (userIdNotIntegerOrUserNotExist(userId)) return;
+            if (userNotExists(userId)) return;
             User user = userRepository.findById(Integer.parseInt(userId));
             System.out.println(user);
         }
@@ -57,7 +57,7 @@ public class UserConsoleCommandExecutor implements ConsoleCommandExecutor {
 
     private void viewt(String command) {
         if (argIsEmpty(command, "У какого пользователя таски смотреть?")
-                || userIdNotIntegerOrUserNotExist(command.split(" ")[0])) {
+                || userNotExists(command.split(" ")[0])) {
             return;
         }
         String[] args = command.split(" ");
@@ -76,7 +76,7 @@ public class UserConsoleCommandExecutor implements ConsoleCommandExecutor {
     private void edit(String command) {
         if (argIsEmpty(command, "А какого пользователя менять-то надо?")
                 || argAfterIdIsAbsent(command.split(" ").length)
-                || userIdNotIntegerOrUserNotExist(command.split(" ")[0])) {
+                || userNotExists(command.split(" ")[0])) {
             return;
         }
         String userId = command.split(" ")[0];
@@ -88,7 +88,7 @@ public class UserConsoleCommandExecutor implements ConsoleCommandExecutor {
     private void create(String command) {
         if (argIsEmpty(command, "Для создания пользователя надо ввести поля")
                 || invalidQuantityFields(command)
-                || userIdNotIntegerOrUserNotExist(command.split(",")[0])) {
+                || userExists(command.split(",")[0])) {
             return;
         }
         String[] userFields = command.split(",");
@@ -99,7 +99,7 @@ public class UserConsoleCommandExecutor implements ConsoleCommandExecutor {
 
     private void delete(String command) {
         if (argIsEmpty(command, "Для удаления пользователя псоле команды надо ввести его id")
-                || userIdNotIntegerOrUserNotExist(command.split(" ")[0])) {
+                || userNotExists(command.split(" ")[0])) {
             return;
         }
         int userId = Integer.parseInt(command.split(" ")[0]);
@@ -174,23 +174,20 @@ public class UserConsoleCommandExecutor implements ConsoleCommandExecutor {
         return false;
     }
 
-    private boolean userIdNotIntegerOrUserNotExist(String id) {
-        int userId = getIntegerOrMinusOne(id);
-        if (userId == -1) return true;
-        if (userRepository.findById(userId) == null) {
-            System.out.format("Пользователя с id %s не существует\n", userId);
+
+    private boolean userNotExists(String id) {
+        if (userRepository.findById(Integer.parseInt(id)) == null) {
+            System.out.format("Пользователя с id %s не существует\n", id);
             return true;
         }
         return false;
     }
 
-    private int getIntegerOrMinusOne(String arg) {
-        int taskId = -1;
-        try {
-            taskId = Integer.parseInt(arg);
-        } catch (NumberFormatException e) {
-            System.out.format("%s - это не число. Id может быть только числовым!\n", arg);
+    private boolean userExists(String id) {
+        if (userRepository.findById(Integer.parseInt(id)) != null) {
+            System.out.format("Пользователь с id %s уже существует\n", id);
+            return true;
         }
-        return taskId;
+        return false;
     }
 }

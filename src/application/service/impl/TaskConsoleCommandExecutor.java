@@ -53,7 +53,7 @@ public class TaskConsoleCommandExecutor implements ConsoleCommandExecutor {
             }
         } else if (!command.startsWith("-")) {
             String taskId = command.split(" ")[0];
-            if (taskIdNotIntegerOrTaskNotExist(taskId)) return;
+            if (isNotInteger(taskId) || taskNotExists(taskId)) return;
             Task task = taskRepository.findById(Integer.parseInt(taskId));
             System.out.println(task);
         } else {
@@ -64,7 +64,8 @@ public class TaskConsoleCommandExecutor implements ConsoleCommandExecutor {
     private void edit(String command) {
         if (argIsEmpty(command, "А какую задачу менять-то надо?")
                 || argAfterIdIsAbsent(command.split(" ").length)
-                || taskIdNotIntegerOrTaskNotExist(command.split(" ")[0])) {
+                || isNotInteger(command.split(" ")[0])
+                || taskNotExists(command.split(" ")[0])) {
             return;
         }
         String taskIdString = command.split(" ")[0];
@@ -75,9 +76,11 @@ public class TaskConsoleCommandExecutor implements ConsoleCommandExecutor {
 
     private void create(String command) {
         if (argIsEmpty(command, "Для создания задачи надо ввести поля")
-                ||invalidQuantityFields(command)
-                || taskIdNotIntegerOrTaskNotExist(command.split(",")[0])
-                || userIdNotIntegerOrUserNotExist(command.split(",")[3])
+                || invalidQuantityFields(command)
+                || isNotInteger(command.split(",")[0])
+                || taskExists(command.split(",")[0])
+                || isNotInteger(command.split(",")[3])
+                || userNotExist(command.split(",")[3])
                 || invalidDate(command.split(",")[4])) {
             return;
         }
@@ -94,7 +97,8 @@ public class TaskConsoleCommandExecutor implements ConsoleCommandExecutor {
 
     private void delete(String command) {
         if (argIsEmpty(command, "Для удаления задачи после команды надо ввести ее id")
-                || taskIdNotIntegerOrTaskNotExist(command.split(" ")[0])) {
+                || isNotInteger(command.split(" ")[0])
+                || taskNotExists(command.split(" ")[0])) {
             return;
         }
         int taskId = Integer.parseInt(command.split(" ")[0]);
@@ -111,7 +115,7 @@ public class TaskConsoleCommandExecutor implements ConsoleCommandExecutor {
             task.setDescription(args[1]);
         }
         if (!args[2].equals(".")) {
-            if (userIdNotIntegerOrUserNotExist(args[2])) return;
+            if (isNotInteger(args[2]) || userNotExist(args[2])) return;
             task.setUserId(Integer.parseInt(args[2]));
         }
         if (!args[3].equals(".")) {
@@ -189,35 +193,40 @@ public class TaskConsoleCommandExecutor implements ConsoleCommandExecutor {
         return false;
     }
 
-    private boolean taskIdNotIntegerOrTaskNotExist(String id) {
-        int taskId = getIntegerOrMinusOne(id);
-        if (taskId == -1) return true;
-        if (taskRepository.findById(taskId) == null) {
+    private boolean taskNotExists(String id) {
+        if (taskRepository.findById(Integer.parseInt(id)) == null) {
             System.out.format("Задачи с id %s не существует\n", id);
             return true;
         }
         return false;
     }
 
-    private boolean userIdNotIntegerOrUserNotExist(String id) {
-        int userId = getIntegerOrMinusOne(id);
-        if (userId == -1) return true;
-        if (userRepository.findById(userId) == null) {
-            System.out.format("Пользователя с id %s не существует\n", userId);
+    private boolean taskExists(String id) {
+        if (taskRepository.findById(Integer.parseInt(id)) != null) {
+            System.out.format("Задача с id %s уже существует\n", id);
             return true;
         }
         return false;
     }
 
-    private int getIntegerOrMinusOne(String arg) {
-        int taskId = -1;
+    private boolean isNotInteger(String arg) {
         try {
-            taskId = Integer.parseInt(arg);
+            Integer.parseInt(arg);
+            return false;
         } catch (NumberFormatException e) {
             System.out.format("%s - это не число. Id может быть только числовым!\n", arg);
+            return true;
         }
-        return taskId;
     }
+
+    private boolean userNotExist(String id) {
+        if (userRepository.findById(Integer.parseInt(id)) == null) {
+            System.out.format("Пользователя с id %s не существует\n", id);
+            return true;
+        }
+        return false;
+    }
+
 
     private LocalDate getLocalDateOrNull(String arg) {
         LocalDate localDate = null;
