@@ -3,41 +3,24 @@ package application.model;
 import java.time.LocalDate;
 
 public class Task {
-    private final String id;
-    private final String title;
-    private final String description;
-    private final String userId;
-    private final LocalDate date;
-    private Status status;
+    private int id;
+    private String title;
+    private String description;
+    private int userId;
+    private LocalDate date;
+    private TaskStatus taskStatus;
 
-    public enum Status {
-        CREATED("Создана"),
-        RUN("В работе"),
-        COMPLETED("Выполнена");
-
-        private final String description;
-
-        Status(String description) {
-            this.description = description;
-        }
-    }
-
-    public Task(String id, String title, String description, String userId, LocalDate date) {
+    public Task(int id, String title, String description, int userId, LocalDate date, TaskStatus taskStatus) {
         this.id = id;
-        this.userId = userId;
         this.title = title;
         this.description = description;
+        this.userId = userId;
         this.date = date;
-        this.status = Status.CREATED;
+        this.taskStatus = taskStatus;
     }
 
-
-    public String getId() {
+    public int getId() {
         return id;
-    }
-
-    public String getUserId() {
-        return userId;
     }
 
     public String getTitle() {
@@ -48,24 +31,49 @@ public class Task {
         return description;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
     public LocalDate getDate() {
         return date;
     }
 
-    public Status getStatus() {
-        return status;
+    public TaskStatus getTaskStatus() {
+        return taskStatus;
     }
 
-    public void changeStatus(Status status) {
-        this.status = status;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
     }
 
     @Override
     public String toString() {
         return "   Id: " + id + "\n" +
+                "   Id пользователя: " + userId + "\n" +
                 "   Заголовок: " + title + "\n" +
                 "   Описание: " + description + "\n" +
                 "   Дедлайн: " + date + "\n" +
-                "   Статус: " + status.description;
+                "   Статус: " + taskStatus.getDescription();
     }
 }

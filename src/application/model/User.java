@@ -3,17 +3,20 @@ package application.model;
 import java.util.List;
 
 public class User {
-    private final String id;
-    private final String name;
-    private final List<Task> tasks;
+    private int id;
+    private String name;
+    private List<Task> tasks;
 
-    public User(String id, String name, List<Task> tasks) {
+    public User(int id, String name) {
         this.id = id;
         this.name = name;
-        this.tasks = tasks;
     }
 
-    public String getId() {
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public int getId() {
         return id;
     }
 
@@ -21,8 +24,16 @@ public class User {
         return name;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     @Override
