@@ -18,6 +18,5 @@ public class TaskDeleteSubscriber implements TaskSubscriber {
             throw new RuntimeException("Для удаления задачи после команды надо ввести его id");
         }
         taskService.delete(Long.valueOf(taskId));
-        System.out.format("Задача с id %s успешно удалена\n", taskId);
     }
 }

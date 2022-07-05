@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 @Component("task-create")
 @RequiredArgsConstructor
 public class TaskCreateSubscriber implements TaskSubscriber {
+    private static final int NUMBER_OF_TASK_FIELDS = 4;
     private final TaskService taskService;
     private final UserService userService;
 
@@ -26,7 +27,7 @@ public class TaskCreateSubscriber implements TaskSubscriber {
                     "id,заголовок,описание,id пользователя,дата");
         }
         String[] taskFields = event.getArgs().split(",");
-        if (taskFields.length != 4) {
+        if (taskFields.length != NUMBER_OF_TASK_FIELDS) {
             throw new RuntimeException("Неверное количество полей для создания задачи");
         }
         User userFoTask = userService.findById(Long.valueOf(taskFields[2]));
@@ -35,6 +36,5 @@ public class TaskCreateSubscriber implements TaskSubscriber {
                 userFoTask,
                 LocalDate.parse(taskFields[3], DateTimeFormatter.ofPattern("d.M.y")),
                 TaskStatus.CREATED));
-        System.out.println("Задача создана");
     }
 }

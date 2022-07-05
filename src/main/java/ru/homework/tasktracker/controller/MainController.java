@@ -3,26 +3,20 @@ package ru.homework.tasktracker.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.homework.tasktracker.publisher.EventPublisher;
-import ru.homework.tasktracker.model.Event;
-import ru.homework.tasktracker.validation.EventValidator;
 
 @RestController
 @RequiredArgsConstructor
 public class MainController {
     private final EventPublisher eventPublisher;
-    private final EventValidator eventValidator;
 
 
     @GetMapping
-    public ResponseEntity<?> executeCommand(@RequestParam("event") String eventString) {
-        Event event = new Event(eventString);
-        if (eventValidator.isValidEvent(event)) {
-            eventPublisher.publishEvent(event);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> executeCommand(@RequestParam("event") String event) {
+        eventPublisher.publishEvent(event);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

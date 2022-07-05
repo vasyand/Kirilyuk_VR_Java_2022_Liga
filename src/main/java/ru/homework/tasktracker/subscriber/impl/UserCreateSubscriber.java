@@ -10,6 +10,7 @@ import ru.homework.tasktracker.subscriber.UserSubscriber;
 @Component("user-create")
 @RequiredArgsConstructor
 public class UserCreateSubscriber implements UserSubscriber {
+    private static final int NUMBER_OF_USER_FIELDS = 1;
     private final UserService userService;
 
     @Override
@@ -19,10 +20,9 @@ public class UserCreateSubscriber implements UserSubscriber {
             throw new RuntimeException("Для создания пользователя надо ввести его данные в виде: id,имя");
         }
         String[] userFields = fields.split(",");
-        if (userFields.length != 1) {
+        if (userFields.length != NUMBER_OF_USER_FIELDS) {
             throw new RuntimeException("Неверное количество полей для создания пользователя");
         }
         userService.save(new User(userFields[0]));
-        System.out.format("Пользователь %s создан\n", userFields[0]);
     }
 }

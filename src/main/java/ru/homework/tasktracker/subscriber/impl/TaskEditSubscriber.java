@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 @Component("task-edit")
 @RequiredArgsConstructor
 public class TaskEditSubscriber implements TaskSubscriber {
+    private static final int MIN_NUMBER_OF_TASK_FIELDS_FOR_UPDATING = 1;
     private final TaskService taskService;
     private final UserService userService;
 
@@ -29,15 +30,14 @@ public class TaskEditSubscriber implements TaskSubscriber {
         String[] args = event.getArgs().split(" ");
         String taskId = args[0];
         Task task = taskService.findById(Long.valueOf(taskId));
-        if (args.length > 1) {
-            merge(task, event.getArgs().substring(taskId.length()).trim());
+        if (args.length > MIN_NUMBER_OF_TASK_FIELDS_FOR_UPDATING) {
+            String updatedFields = event.getArgs().substring(taskId.length()).trim();
+            merge(task, updatedFields);
         }
         taskService.update(task);
-        System.out.format("Задача с id %s обновлена\n", task.getId());
     }
 
     private void merge(Task task, String fields) {
-        System.out.println(fields);
         String[] args = fields.split(",");
         if (!args[0].equals(".")) {
             task.setTitle(args[0]);

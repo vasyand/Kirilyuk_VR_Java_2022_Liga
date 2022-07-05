@@ -18,6 +18,5 @@ public class UserDeleteSubscriber implements UserSubscriber {
             throw new RuntimeException("Для удаления пользователя псоле команды надо ввести его id");
         }
         userService.delete(Long.valueOf(userId));
-        System.out.format("Пользователь с id %s успешно удален\n", userId);
     }
 }

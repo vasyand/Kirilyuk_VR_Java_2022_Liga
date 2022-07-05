@@ -1,6 +1,5 @@
 package ru.homework.tasktracker.model.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +7,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -40,7 +38,7 @@ public class Task {
     @Override
     public String toString() {
         return "   Id: " + id + "\n" +
-                "   Пользователя: " + user + "\n" +
+                "   Пользователь: " + user + "\n" +
                 "   Заголовок: " + title + "\n" +
                 "   Описание: " + description + "\n" +
                 "   Дедлайн: " + date + "\n" +
