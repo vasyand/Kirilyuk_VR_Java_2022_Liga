@@ -10,7 +10,7 @@ public class Filter {
     public Filter(String filterString) {
         String[] filterWithArg = filterString.split("=");
         this.filter = filterWithArg[0];
-        if (filterString.length() != 1)
+        if (filterWithArg.length != 1)
         this.argument = filterWithArg[1];
     }
 }

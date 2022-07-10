@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.Event;
 import ru.homework.tasktracker.model.Filter;
 import ru.homework.tasktracker.model.entity.Task;
+import ru.homework.tasktracker.model.entity.TaskStatus;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.subscriber.TaskSubscriber;
 
@@ -43,13 +44,17 @@ public class TaskViewSubscriber implements TaskSubscriber {
         Filter filter = new Filter(filterString);
         if (!filter.getFilter().equals(STATUS_FILTER)) {
             throw new RuntimeException(
-                    String.format("Фильтра %s не существует. Есть пока только фильтр \"-fs\"",
+                    String.format("Фильтра %s не существует. " +
+                                    "Есть пока только фильтр \"-fs=status(CREATED,RUN,COMPLETED)\"",
                             filter.getFilter()));
         }
         if (filter.getArgument() == null) {
             throw new RuntimeException("Отсутствует аргумент для фильтра!");
         }
         String status = filter.getArgument();
+        if (!TaskStatus.getStatusSet().contains(status)) {
+            throw new RuntimeException(String.format("Статуса %s не существует!", status));
+        }
         List<Task> tasks = taskService.findAll().stream()
                 .filter(task -> task.getTaskStatus().toString().equals(status))
                 .collect(Collectors.toList());
