@@ -1,7 +1,6 @@
 package ru.homework.tasktracker.util;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.homework.tasktracker.model.Event;
 import ru.homework.tasktracker.model.TaskStrategyName;
 import ru.homework.tasktracker.model.UserStrategyName;
 
