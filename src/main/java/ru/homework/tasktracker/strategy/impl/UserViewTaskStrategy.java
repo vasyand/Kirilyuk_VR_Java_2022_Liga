@@ -1,47 +1,54 @@
-package ru.homework.tasktracker.subscriber.impl;
+package ru.homework.tasktracker.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.homework.tasktracker.model.Event;
-import ru.homework.tasktracker.model.Filter;
+import ru.homework.tasktracker.model.*;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.entity.TaskStatus;
 import ru.homework.tasktracker.model.entity.User;
 import ru.homework.tasktracker.service.UserService;
-import ru.homework.tasktracker.subscriber.UserSubscriber;
+import ru.homework.tasktracker.strategy.UserStrategy;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.homework.tasktracker.model.StrategyResponse.*;
 import static ru.homework.tasktracker.util.MessageHelper.createMessageFromListOfEntities;
 
-@Component("user-viewt")
+@Component
 @RequiredArgsConstructor
 @Slf4j
-public class UserViewTaskSubscriber implements UserSubscriber {
+public class UserViewTaskStrategy implements UserStrategy {
     private final static String STATUS_FILTER = "-fs";
     private final UserService userService;
 
     @Override
-    public void execute(Event event) {
-        if (event.getArgs() == null) {
-            throw new RuntimeException("Для команды \"viewt\" надо указать " +
-                    "id пользователя и фильтр статуса задачи (опционально)");
+    public StrategyResponse execute(UserEvent event) {
+        try {
+            if (event.getArgs() == null) {
+                throw new RuntimeException("Для команды \"viewt\" надо указать " +
+                        "id пользователя и фильтр статуса задачи (опционально)");
+            }
+            String[] args = event.getArgs().split(" ");
+            User user = userService.findById(Long.valueOf(args[0]));
+            StrategyResponse strategyResponse = new StrategyResponse(Status.OK);
+            if (filterIsAbsent(args)) {
+                strategyResponse.setMessage(createMessageFromListOfEntities(
+                        String.format("Список задач у пользователя %s: ", user.getName()),
+                        String.format("У пользователя %s нет задач", user.getName()),
+                        user.getTasks()));
+            } else {
+                viewWithFilter(user, args[1], strategyResponse);
+            }
+            return strategyResponse;
+        } catch (RuntimeException e) {
+            return new StrategyResponse(e.getMessage(), Status.BAD);
         }
-        String[] args = event.getArgs().split(" ");
-        User user = userService.findById(Long.valueOf(args[0]));
-        if (filterIsAbsent(args)) {
-            log.info(createMessageFromListOfEntities(
-                    String.format("Список задач у пользователя %s: ", user.getName()),
-                    String.format("У пользователя %s нет задач", user.getName()),
-                    user.getTasks()));
-        } else {
-            viewWithFilter(user, args[1]);
-        }
+
     }
 
-    private void viewWithFilter(User user, String filterString) {
+    private void viewWithFilter(User user, String filterString, StrategyResponse strategyResponse) {
         Filter filter = new Filter(filterString);
         if (!filter.getFilter().equals(STATUS_FILTER)) {
             throw new RuntimeException(String.format("Фильтра %s не существует. " +
@@ -56,7 +63,7 @@ public class UserViewTaskSubscriber implements UserSubscriber {
         List<Task> tasks = user.getTasks().stream()
                 .filter(task -> task.getTaskStatus().toString().equals(status))
                 .collect(Collectors.toList());
-        log.info(createMessageFromListOfEntities(
+        strategyResponse.setMessage(createMessageFromListOfEntities(
                 String.format("Список задач со статусом %s у пользователя %s: ", status, user.getName()),
                 String.format("Задач со статусом %s у пользователя %s сейчас нет ", status, user.getName()),
                 tasks));
@@ -64,5 +71,10 @@ public class UserViewTaskSubscriber implements UserSubscriber {
 
     private boolean filterIsAbsent(String[] arg) {
         return arg.length == 1;
+    }
+
+    @Override
+    public UserStrategyName getStrategyName() {
+        return UserStrategyName.VIEWT;
     }
 }

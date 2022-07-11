@@ -6,17 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.homework.tasktracker.publisher.EventPublisher;
+import ru.homework.tasktracker.executor.StrategyExecutor;
 
 @RestController
 @RequiredArgsConstructor
 public class MainController {
-    private final EventPublisher eventPublisher;
+    private final StrategyExecutor strategyExecutor;
 
 
     @GetMapping
     public ResponseEntity<?> executeCommand(@RequestParam("event") String event) {
-        eventPublisher.publishEvent(event);
+        strategyExecutor.executeEvent(event);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
