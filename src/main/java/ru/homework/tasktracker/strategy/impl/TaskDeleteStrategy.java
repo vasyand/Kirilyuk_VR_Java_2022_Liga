@@ -24,6 +24,8 @@ public class TaskDeleteStrategy implements TaskStrategy {
             }
             taskService.delete(Long.valueOf(taskId));
             return new StrategyResponse("Задача успешно удалена!", Status.OK);
+        } catch (NumberFormatException e) {
+            return new StrategyResponse("id должен быть числовым значением", Status.BAD);
         } catch (RuntimeException e) {
            return new StrategyResponse(e.getMessage(), Status.BAD);
         }

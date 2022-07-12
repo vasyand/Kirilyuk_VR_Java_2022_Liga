@@ -12,10 +12,11 @@ import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.TaskStrategy;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static ru.homework.tasktracker.model.StrategyResponse.*;
+import static ru.homework.tasktracker.model.StrategyResponse.Status;
 
 @Component
 @RequiredArgsConstructor
@@ -42,6 +43,8 @@ public class TaskCreateStrategy implements TaskStrategy {
                     LocalDate.parse(taskFields[3], DateTimeFormatter.ofPattern("d.M.y")),
                     TaskStatus.CREATED));
             return new StrategyResponse("Задача успешно сохранена!", Status.OK);
+        } catch (NumberFormatException | DateTimeException e) {
+            return new StrategyResponse("Неверно введена дата или id пользователя", Status.BAD);
         } catch (RuntimeException e) {
             return new StrategyResponse(e.getMessage(), Status.BAD);
         }
