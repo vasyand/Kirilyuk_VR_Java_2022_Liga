@@ -29,7 +29,7 @@ public class UserCreateStrategy implements UserStrategy {
                 throw new RuntimeException("Неверное количество полей для создания пользователя");
             }
             userService.save(new User(userFields[0]));
-            return new StrategyResponse("Пользователь умпешно сохранен!", Status.OK);
+            return new StrategyResponse("Пользователь успешно сохранен!", Status.OK);
         } catch (RuntimeException e) {
             return new StrategyResponse(e.getMessage(), Status.BAD);
         }

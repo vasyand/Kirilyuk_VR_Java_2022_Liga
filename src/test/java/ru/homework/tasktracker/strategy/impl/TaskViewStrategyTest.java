@@ -16,29 +16,29 @@ import static org.mockito.Mockito.verify;
 import static ru.homework.tasktracker.model.StrategyResponse.Status;
 
 @ExtendWith(MockitoExtension.class)
-class TaskViewSubscriberTest {
+class TaskViewStrategyTest {
 
     @Mock
     TaskService taskService;
 
     @InjectMocks
-    TaskViewStrategy taskViewSubscriber;
+    TaskViewStrategy taskViewStrategy;
 
 
     @Test
     @DisplayName("Показ всех задач")
     void execute_WhenTaskIdIsNull_ThenCallFindAllMethodAndReturnOkResponse() {
         TaskEvent event = new TaskEvent("task view");
-        StrategyResponse strategyResponse = taskViewSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskViewStrategy.execute(event);
         verify(taskService).findAll();
         assertEquals(Status.OK, strategyResponse.getStatus());
     }
 
     @Test
     @DisplayName("Показ задачи с определенным id")
-    void execute_WhenTaskIdIsNotNull_ThenCallFindByIdMethodAndReturnOkResponse() {
+    void execute_WhenTaskIdIsValid_ThenCallFindByIdMethodAndReturnOkResponse() {
         TaskEvent event = new TaskEvent("task view 3");
-        StrategyResponse strategyResponse = taskViewSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskViewStrategy.execute(event);
         verify(taskService).findById(anyLong());
         assertEquals(Status.OK, strategyResponse.getStatus());
     }
@@ -47,16 +47,16 @@ class TaskViewSubscriberTest {
     @DisplayName("Показ задач с определенным статусом")
     void execute_WhenFilterIsValid_ThenCallFindAllMethodAndReturnOkResponse() {
         TaskEvent event = new TaskEvent("task view -fs=RUN");
-        StrategyResponse strategyResponse = taskViewSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskViewStrategy.execute(event);
         verify(taskService).findAll();
         assertEquals(Status.OK, strategyResponse.getStatus());
     }
 
     @Test
     @DisplayName("Показ задач c неправильно введенным значением статуса")
-    void execute_WhenFilterIsInvalid_ThenThrowRuntimeException() {
+    void execute_WhenFilterIsInvalid_ThenReturnBadResponse() {
         TaskEvent event = new TaskEvent("task view -badFilter=3");
-        StrategyResponse strategyResponse = taskViewSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskViewStrategy.execute(event);
         assertEquals(String.format("Фильтра %s не существует. " +
                         "Есть пока только фильтр \"-fs=status(CREATED,RUN,COMPLETED)\"",
                 "-badFilter"), strategyResponse.getMessage());
@@ -65,19 +65,28 @@ class TaskViewSubscriberTest {
 
     @Test
     @DisplayName("Показ задач cо статусом без аргумента")
-    void execute_WhenFilterWithoutArgument_ThenThrowRuntimeException() {
+    void execute_WhenFilterWithoutArgument_ThenReturnBadResponse() {
         TaskEvent event = new TaskEvent("task view -fs=");
-        StrategyResponse strategyResponse = taskViewSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskViewStrategy.execute(event);
         assertEquals("Отсутствует аргумент для фильтра!", strategyResponse.getMessage());
         assertEquals(Status.BAD, strategyResponse.getStatus());
     }
 
     @Test
     @DisplayName("Показ задач c невалидным аргументом в статусе")
-    void execute_WhenFilterArgumentIsInvalid_ThenThrowRuntimeException() {
+    void execute_WhenFilterArgumentIsInvalid_ThenReturnBadResponse() {
         TaskEvent event = new TaskEvent("task view -fs=badStatus");
-        StrategyResponse strategyResponse = taskViewSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskViewStrategy.execute(event);
         assertEquals(String.format("Статуса %s не существует!", "badStatus"), strategyResponse.getMessage());
+        assertEquals(Status.BAD, strategyResponse.getStatus());
+    }
+
+    @Test
+    @DisplayName("Показ задачи с указанием нечислового id задачи")
+    void execute_WhenTaskIdIsNotValid_ThenReturnBadResponse() {
+        TaskEvent event = new TaskEvent("task view dfssdfsd");
+        StrategyResponse strategyResponse = taskViewStrategy.execute(event);
+        assertEquals("id должен быть числовым значением", strategyResponse.getMessage());
         assertEquals(Status.BAD, strategyResponse.getStatus());
     }
 }

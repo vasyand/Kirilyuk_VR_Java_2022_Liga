@@ -25,6 +25,7 @@ public class UserViewTaskStrategy implements UserStrategy {
 
     @Override
     public StrategyResponse execute(UserEvent event) {
+        StrategyResponse strategyResponse = new StrategyResponse(Status.OK);
         try {
             if (event.getArgs() == null) {
                 throw new RuntimeException("Для команды \"viewt\" надо указать " +
@@ -32,7 +33,6 @@ public class UserViewTaskStrategy implements UserStrategy {
             }
             String[] args = event.getArgs().split(" ");
             User user = userService.findById(Long.valueOf(args[0]));
-            StrategyResponse strategyResponse = new StrategyResponse(Status.OK);
             if (filterIsAbsent(args)) {
                 strategyResponse.setMessage(createMessageFromListOfEntities(
                         String.format("Список задач у пользователя %s: ", user.getName()),
@@ -42,6 +42,8 @@ public class UserViewTaskStrategy implements UserStrategy {
                 viewWithFilter(user, args[1], strategyResponse);
             }
             return strategyResponse;
+        } catch (NumberFormatException e) {
+            return new StrategyResponse("id должен быть числовым значением", Status.BAD);
         } catch (RuntimeException e) {
             return new StrategyResponse(e.getMessage(), Status.BAD);
         }

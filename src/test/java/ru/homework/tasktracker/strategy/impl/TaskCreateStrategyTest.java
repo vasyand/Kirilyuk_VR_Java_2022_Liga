@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.homework.tasktracker.model.StrategyResponse.Status;
 
 @ExtendWith(MockitoExtension.class)
-class TaskCreateSubscriberTest {
+class TaskCreateStrategyTest {
 
     @Mock
     UserService userService;
@@ -28,13 +28,13 @@ class TaskCreateSubscriberTest {
     TaskService taskService;
 
     @InjectMocks
-    TaskCreateStrategy taskCreateSubscriber;
+    TaskCreateStrategy taskCreateStrategy;
 
     @Test
     @DisplayName("Сохранение задачи с пустыми входными данными")
     void execute_WhenEventArgsIsNull_ThenReturnBadResponse() {
         TaskEvent event = new TaskEvent("task create");
-        StrategyResponse strategyResponse = taskCreateSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskCreateStrategy.execute(event);
         assertEquals("Для создания задачи надо ввести ее данные в виде: " +
                 "id,заголовок,описание,id пользователя,дата", strategyResponse.getMessage());
         assertEquals(Status.BAD, strategyResponse.getStatus());
@@ -44,7 +44,7 @@ class TaskCreateSubscriberTest {
     @DisplayName("Сохранение задачи с неправильным количесвтом входных данных")
     void execute_WhenInvalidNumberOfFieldsForSavingTask_ThenReturnBadResponse() {
         TaskEvent event = new TaskEvent("task create title,description");
-        StrategyResponse strategyResponse = taskCreateSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskCreateStrategy.execute(event);
         assertEquals("Неверное количество полей для создания задачи", strategyResponse.getMessage());
         assertEquals(Status.BAD, strategyResponse.getStatus());
     }
@@ -54,7 +54,7 @@ class TaskCreateSubscriberTest {
     @DisplayName("Сохранение задачи с неправильно заполненными входными данными")
     void execute_WhenInvalidFieldsForSavingTask_ThenReturnBadResponse(String badEvent) {
         TaskEvent event = new TaskEvent(badEvent);
-        StrategyResponse strategyResponse = taskCreateSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskCreateStrategy.execute(event);
         assertEquals("Неверно введена дата или id пользователя", strategyResponse.getMessage());
         assertEquals(Status.BAD, strategyResponse.getStatus());
     }
@@ -63,7 +63,7 @@ class TaskCreateSubscriberTest {
     @DisplayName("Сохранение задачи с нормальными входными данными")
     void execute_SuccessTest() {
         TaskEvent event = new TaskEvent("task create title,description,3,20.02.2022");
-        StrategyResponse strategyResponse = taskCreateSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskCreateStrategy.execute(event);
         assertEquals("Задача успешно сохранена!", strategyResponse.getMessage());
         assertEquals(Status.OK, strategyResponse.getStatus());
     }

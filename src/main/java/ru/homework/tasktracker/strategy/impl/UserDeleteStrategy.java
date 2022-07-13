@@ -24,6 +24,8 @@ public class UserDeleteStrategy implements UserStrategy {
             }
             userService.delete(Long.valueOf(userId));
             return new StrategyResponse("Пользователь успешно удален!", Status.OK);
+        } catch (NumberFormatException e) {
+            return new StrategyResponse("id должен быть числовым значением", Status.BAD);
         } catch (RuntimeException e) {
             return new StrategyResponse(e.getMessage(), Status.BAD);
         }

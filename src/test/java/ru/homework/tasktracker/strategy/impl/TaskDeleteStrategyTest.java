@@ -14,19 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.homework.tasktracker.model.StrategyResponse.*;
 
 @ExtendWith(MockitoExtension.class)
-class TaskDeleteSubscriberTest {
+class TaskDeleteStrategyTest {
 
     @Mock
     TaskService taskService;
 
     @InjectMocks
-    TaskDeleteStrategy taskDeleteSubscriber;
+    TaskDeleteStrategy taskDeleteStrategy;
 
     @Test
     @DisplayName("Удаление задачи с нормальными входными данными")
     void execute_successTest() {
         TaskEvent event = new TaskEvent("task delete 1");
-        StrategyResponse strategyResponse = taskDeleteSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskDeleteStrategy.execute(event);
         assertEquals("Задача успешно удалена!", strategyResponse.getMessage());
         assertEquals(Status.OK, strategyResponse.getStatus());
     }
@@ -35,7 +35,7 @@ class TaskDeleteSubscriberTest {
     @DisplayName("Удаление задачи без указания в команде id задачи")
     void execute_WhenTaskIdIsNull_ThenReturnBadResponse() {
         TaskEvent event = new TaskEvent("task delete");
-        StrategyResponse strategyResponse = taskDeleteSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskDeleteStrategy.execute(event);
         assertEquals("Для удаления задачи после команды надо ввести его id", strategyResponse.getMessage());
         assertEquals(Status.BAD, strategyResponse.getStatus());
     }
@@ -44,7 +44,7 @@ class TaskDeleteSubscriberTest {
     @DisplayName("Удаление задачи с указанием нечислового id задачи")
     void execute_WhenTaskIdIsNotValid_ThenReturnBadResponse() {
         TaskEvent event = new TaskEvent("task delete dfssdfsd");
-        StrategyResponse strategyResponse = taskDeleteSubscriber.execute(event);
+        StrategyResponse strategyResponse = taskDeleteStrategy.execute(event);
         assertEquals("id должен быть числовым значением", strategyResponse.getMessage());
         assertEquals(Status.BAD, strategyResponse.getStatus());
     }

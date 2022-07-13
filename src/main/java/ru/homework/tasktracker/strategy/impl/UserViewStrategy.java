@@ -38,6 +38,8 @@ public class UserViewStrategy implements UserStrategy {
                 strategyResponse.setMessage(createMessageFromEntity(user));
             }
             return strategyResponse;
+        } catch (NumberFormatException e) {
+            return new StrategyResponse("id должен быть числовым значением", Status.BAD);
         } catch (Exception e) {
             return new StrategyResponse(e.getMessage(), Status.BAD);
         }

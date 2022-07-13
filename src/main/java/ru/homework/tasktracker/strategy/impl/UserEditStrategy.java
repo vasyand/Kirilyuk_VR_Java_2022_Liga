@@ -32,6 +32,8 @@ public class UserEditStrategy implements UserStrategy {
             }
             userService.update(user);
             return new StrategyResponse("Пользователь успешно изменен!", Status.OK);
+        } catch (NumberFormatException e) {
+            return new StrategyResponse("id должен быть числовым значением", Status.BAD);
         } catch (RuntimeException e) {
             return new StrategyResponse(e.getMessage(), Status.BAD);
         }
