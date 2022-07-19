@@ -24,8 +24,8 @@ public class MainController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchUser(@RequestParam("event") String event) {
+    @GetMapping("users/search")
+    public ResponseEntity<?> searchUserWithMaxNumberTasks(@RequestParam("event") String event) {
         StrategyResponse strategyResponse = strategyExecutor.executeEvent(event);
         log.info(strategyResponse.getMessage());
         return new ResponseEntity<>(HttpStatus.OK);
