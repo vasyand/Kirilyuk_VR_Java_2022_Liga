@@ -3,12 +3,13 @@ package ru.homework.tasktracker.strategy.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyResponse;
-import ru.homework.tasktracker.model.UserEvent;
 import ru.homework.tasktracker.model.UserStrategyName;
+import ru.homework.tasktracker.model.event.UserDeleteEvent;
+import ru.homework.tasktracker.model.event.UserEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.UserStrategy;
 
-import static ru.homework.tasktracker.model.StrategyResponse.*;
+import static ru.homework.tasktracker.mapper.UserEventMapper.toUserDeleteEvent;
 
 @Component
 @RequiredArgsConstructor
@@ -17,18 +18,9 @@ public class UserDeleteStrategy implements UserStrategy {
 
     @Override
     public StrategyResponse execute(UserEvent event) {
-        try {
-            String userId = event.getArgs();
-            if (userId == null) {
-                throw new RuntimeException("Для удаления пользователя псоле команды надо ввести его id");
-            }
-            userService.delete(Long.valueOf(userId));
-            return new StrategyResponse("Пользователь успешно удален!", Status.OK);
-        } catch (NumberFormatException e) {
-            return new StrategyResponse("id должен быть числовым значением", Status.BAD);
-        } catch (RuntimeException e) {
-            return new StrategyResponse(e.getMessage(), Status.BAD);
-        }
+        UserDeleteEvent userDeleteEvent = toUserDeleteEvent(event);
+        userService.delete(userDeleteEvent.getUserId());
+        return new StrategyResponse("Пользователь успешно удален!");
     }
 
     @Override

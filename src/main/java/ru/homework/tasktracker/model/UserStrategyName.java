@@ -5,5 +5,6 @@ public enum UserStrategyName {
     DELETE,
     EDIT,
     VIEW,
-    VIEWT
+    VIEWT,
+    VIEWMT
 }

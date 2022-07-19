@@ -1,6 +1,7 @@
-package ru.homework.tasktracker.model;
+package ru.homework.tasktracker.model.event;
 
 import lombok.Getter;
+import ru.homework.tasktracker.model.TaskStrategyName;
 
 @Getter
 public class TaskEvent {
