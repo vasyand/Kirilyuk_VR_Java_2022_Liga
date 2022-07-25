@@ -5,16 +5,23 @@ import java.util.stream.Collectors;
 
 public class MessageHelper {
     public static String createMessageFromListOfEntities(String prefix, String emptyMessage, List<?> list) {
-        if (list.isEmpty()) {
+        if (prefix == null) {
+            prefix = "";
+        }
+        if (emptyMessage == null) {
+            emptyMessage = "";
+        }
+        if (list == null || list.isEmpty()) {
             return emptyMessage;
         }
         return "\n" + prefix + list.stream()
                 .map(Object::toString)
-                .collect(Collectors.joining("\n", "\n", "\n"));
+                .collect(Collectors.joining("\n", "", "\n"));
     }
 
     public static String createMessageFromEntity(Object object) {
-        return "\n" + object.toString() + "\n";
+        if (object == null) return  "";
+        return createMessageFromListOfEntities("", "", List.of(object));
     }
 
 

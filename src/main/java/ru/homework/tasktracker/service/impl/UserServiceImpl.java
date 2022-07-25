@@ -1,17 +1,22 @@
 package ru.homework.tasktracker.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.homework.tasktracker.model.entity.User;
+import ru.homework.tasktracker.model.filter.UserFilter;
 import ru.homework.tasktracker.repository.UserRepository;
 import ru.homework.tasktracker.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Comparator.comparingInt;
+import static org.springframework.data.jpa.domain.Specification.where;
+import static ru.homework.tasktracker.specification.UserSpecification.generateSpecificationByUserFilter;
+import static ru.homework.tasktracker.specification.UserSpecification.getUserById;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -22,6 +27,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findById(Long id, UserFilter userFilter) {
+        User user =  userRepository.findOne(where(getUserById(id))
+                .and(generateSpecificationByUserFilter(userFilter)))
+                .orElse(null);
+        if (user == null) {
+            user = findById(id);
+            user.setTasks(new ArrayList<>());
+        }
+        return user;
+    }
+
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -29,19 +46,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(User user) {
         userRepository.save(user);
-        log.info("Пользователь {} создан", user.getName());
     }
 
     @Override
     public void update(User user) {
         userRepository.save(user);
-        log.info("Пользователь {} обновлен", user.getName());
     }
 
     @Override
     public void delete(Long id) {
         User user = findById(id);
         userRepository.delete(user);
-        log.info("Пользователь {} удален", user.getName());
     }
+
+    @Override
+    public User findUserWithMaxNumberTasks(UserFilter userFilter) {
+        List<User> users = userRepository.findAll(generateSpecificationByUserFilter(userFilter));
+        return users.stream()
+                .max(comparingInt(u -> u.getTasks().size()))
+                .orElseThrow(() -> new RuntimeException("С такими значениями фильтров никого не нашлось"));
+    }
+
 }
