@@ -2,13 +2,12 @@ package ru.homework.tasktracker.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
-import ru.homework.tasktracker.model.TaskStrategyName;
 import ru.homework.tasktracker.model.entity.Task;
-import ru.homework.tasktracker.model.event.TaskEvent;
 import ru.homework.tasktracker.model.event.TaskViewEvent;
 import ru.homework.tasktracker.service.TaskService;
-import ru.homework.tasktracker.strategy.TaskStrategy;
+import ru.homework.tasktracker.strategy.Strategy;
 
 import java.util.List;
 
@@ -18,14 +17,14 @@ import static ru.homework.tasktracker.util.MessageHelper.createMessageFromListOf
 
 @Component
 @RequiredArgsConstructor
-public class TaskViewStrategy implements TaskStrategy {
+public class TaskViewStrategy implements Strategy {
 
     private final TaskService taskService;
 
     @Override
-    public StrategyResponse execute(TaskEvent event) {
+    public StrategyResponse execute(String argument) {
         StrategyResponse strategyResponse = new StrategyResponse();
-        TaskViewEvent taskViewEvent = toTaskViewEvent(event);
+        TaskViewEvent taskViewEvent = toTaskViewEvent(argument);
         if (taskViewEvent.getTaskId() == null) {
             List<Task> tasks = taskService.findAll();
             strategyResponse.setMessage(createMessageFromListOfEntities(
@@ -41,7 +40,7 @@ public class TaskViewStrategy implements TaskStrategy {
     }
 
     @Override
-    public TaskStrategyName getStrategyName() {
-        return TaskStrategyName.VIEW;
+    public StrategyName getStrategyName() {
+        return StrategyName.TASK_VIEW;
     }
 }

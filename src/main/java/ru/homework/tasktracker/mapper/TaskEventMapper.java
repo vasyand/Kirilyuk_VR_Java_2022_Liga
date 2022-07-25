@@ -10,8 +10,7 @@ import static ru.homework.tasktracker.util.StringParser.getIdFromString;
 
 public class TaskEventMapper {
 
-    public static TaskCreateEvent toTaskCreateEvent(TaskEvent taskEvent) {
-        String args = taskEvent.getArgs();
+    public static TaskCreateEvent toTaskCreateEvent(String args) {
         int NUMBER_OF_TASK_FIELDS = 4;
         if (args == null) {
             throw new RuntimeException("Для создания задачи надо ввести ее данные в виде: " +
@@ -29,16 +28,14 @@ public class TaskEventMapper {
         );
     }
 
-    public static TaskDeleteEvent toTaskDeleteEvent(TaskEvent taskEvent) {
-        String arg = taskEvent.getArgs();
+    public static TaskDeleteEvent toTaskDeleteEvent(String arg) {
         if (arg == null) {
             throw new RuntimeException("Для удаления задачи после команды надо ввести его id");
         }
         return new TaskDeleteEvent(getIdFromString(arg));
     }
 
-    public static TaskEditEvent toTaskEditEvent(TaskEvent taskEvent) {
-        String args = taskEvent.getArgs();
+    public static TaskEditEvent toTaskEditEvent(String args) {
         int NUMBER_OF_TASK_FIELDS = 5;
         if (args == null) {
             throw new RuntimeException("Для редактирования задачи надо ввести его id и данные в виде: " +
@@ -75,8 +72,7 @@ public class TaskEventMapper {
         return new TaskEditEvent(taskId, title, description, userId, date, status);
     }
 
-    public static TaskViewEvent toTaskViewEvent(TaskEvent taskEvent) {
-        String args = taskEvent.getArgs();
+    public static TaskViewEvent toTaskViewEvent(String args) {
         Long taskId = null;
         if (args != null) taskId = getIdFromString(args);
         return new TaskViewEvent(taskId);

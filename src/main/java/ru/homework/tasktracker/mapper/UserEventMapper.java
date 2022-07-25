@@ -8,25 +8,22 @@ import static ru.homework.tasktracker.util.StringParser.getIdFromString;
 
 public class UserEventMapper {
 
-    public static UserCreateEvent toUserCreateEvent(UserEvent userEvent) {
-        String args = userEvent.getArgs();
+    public static UserCreateEvent toUserCreateEvent(String args) {
         if (args == null) {
             throw new RuntimeException("Для создания пользователя надо ввести его данные в виде: имя");
         }
         return new UserCreateEvent(args);
     }
 
-    public static UserDeleteEvent toUserDeleteEvent(UserEvent userEvent) {
-        String args = userEvent.getArgs();
+    public static UserDeleteEvent toUserDeleteEvent(String args) {
         if (args == null) {
             throw new RuntimeException("Для удаления пользователя псоле команды надо ввести его id");
         }
         return new UserDeleteEvent(getIdFromString(args));
     }
 
-    public static UserEditEvent toUserEditEvent(UserEvent userEvent) {
+    public static UserEditEvent toUserEditEvent(String args) {
         int NUMBER_OF_USER_FIELDS = 1;
-        String args = userEvent.getArgs();
         if (args == null) {
             throw new RuntimeException("Для редактирования пользователя надо ввести его id и данные в виде: id имя");
         }
@@ -42,15 +39,13 @@ public class UserEventMapper {
         return new UserEditEvent(getIdFromString(idAndFields[0]), name);
     }
 
-    public static UserViewEvent toUserViewEvent(UserEvent userEvent) {
-        String args = userEvent.getArgs();
+    public static UserViewEvent toUserViewEvent(String args) {
         Long userId = null;
         if (args != null) userId = getIdFromString(args);
         return new UserViewEvent(userId);
     }
 
-    public static UserViewWithMaxNumberTasksEvent toUserViewWithMaxNumberTasksEvent(UserEvent userEvent) {
-        String args = userEvent.getArgs();
+    public static UserViewWithMaxNumberTasksEvent toUserViewWithMaxNumberTasksEvent(String args) {
         UserFilter userFilter = new UserFilter();
         if (args != null) {
             fillUserFilter(args, userFilter);
@@ -58,8 +53,7 @@ public class UserEventMapper {
         return new UserViewWithMaxNumberTasksEvent(userFilter);
     }
 
-    public static UserViewTaskEvent toUserViewTaskEvent(UserEvent userEvent) {
-        String args = userEvent.getArgs();
+    public static UserViewTaskEvent toUserViewTaskEvent(String args) {
         if (args == null) {
             throw new RuntimeException("Для просмотра задач пользователя надо ввести его id и фильтры (опционально)");
         }

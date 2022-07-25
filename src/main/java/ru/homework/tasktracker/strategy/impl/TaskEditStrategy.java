@@ -2,28 +2,27 @@ package ru.homework.tasktracker.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
-import ru.homework.tasktracker.model.TaskStrategyName;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.entity.User;
 import ru.homework.tasktracker.model.event.TaskEditEvent;
-import ru.homework.tasktracker.model.event.TaskEvent;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.service.UserService;
-import ru.homework.tasktracker.strategy.TaskStrategy;
+import ru.homework.tasktracker.strategy.Strategy;
 
 import static ru.homework.tasktracker.mapper.TaskEventMapper.toTaskEditEvent;
 
 @Component
 @RequiredArgsConstructor
-public class TaskEditStrategy implements TaskStrategy {
+public class TaskEditStrategy implements Strategy {
     private final TaskService taskService;
     private final UserService userService;
 
 
     @Override
-    public StrategyResponse execute(TaskEvent event) {
-        TaskEditEvent taskEditEvent = toTaskEditEvent(event);
+    public StrategyResponse execute(String argument) {
+        TaskEditEvent taskEditEvent = toTaskEditEvent(argument);
         Task updatedTask = taskService.findById(taskEditEvent.getTaskId());
         merge(updatedTask, taskEditEvent);
         taskService.update(updatedTask);
@@ -50,7 +49,7 @@ public class TaskEditStrategy implements TaskStrategy {
     }
 
     @Override
-    public TaskStrategyName getStrategyName() {
-        return TaskStrategyName.EDIT;
+    public StrategyName getStrategyName() {
+        return StrategyName.TASK_EDIT;
     }
 }
