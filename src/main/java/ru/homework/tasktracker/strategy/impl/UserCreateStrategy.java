@@ -19,7 +19,12 @@ public class UserCreateStrategy implements Strategy {
     @Override
     public StrategyResponse execute(String argument) {
         UserCreateEvent userCreateEvent = toUserCreateEvent(argument);
-        userService.save(new User(userCreateEvent.getName()));
+        userService.save(new User(
+                userCreateEvent.getFirstName(),
+                userCreateEvent.getMiddleName(),
+                userCreateEvent.getLastName(),
+                userCreateEvent.getEmail(),
+                userCreateEvent.getPassword()));
         return new StrategyResponse("Пользователь успешно сохранен!");
     }
 

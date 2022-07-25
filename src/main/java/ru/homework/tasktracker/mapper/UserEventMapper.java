@@ -9,10 +9,20 @@ import static ru.homework.tasktracker.util.StringParser.getIdFromString;
 public class UserEventMapper {
 
     public static UserCreateEvent toUserCreateEvent(String args) {
+        int NUMBER_OF_USER_FIELDS = 5;
         if (args == null) {
-            throw new RuntimeException("Для создания пользователя надо ввести его данные в виде: имя");
+            throw new RuntimeException("Для создания задачи надо ввести ее данные в виде: " +
+                    "id,заголовок,описание,id пользователя,дата");
         }
-        return new UserCreateEvent(args);
+        String[] userFields = args.split(",");
+        if (userFields.length != NUMBER_OF_USER_FIELDS) {
+            throw new RuntimeException("Неверное количество полей для создания пользователя");
+        }
+        return new UserCreateEvent(userFields[0],
+                userFields[1],
+                userFields[2],
+                userFields[3],
+                userFields[4]);
     }
 
     public static UserDeleteEvent toUserDeleteEvent(String args) {
@@ -23,7 +33,7 @@ public class UserEventMapper {
     }
 
     public static UserEditEvent toUserEditEvent(String args) {
-        int NUMBER_OF_USER_FIELDS = 1;
+        int NUMBER_OF_USER_FIELDS = 3;
         if (args == null) {
             throw new RuntimeException("Для редактирования пользователя надо ввести его id и данные в виде: id имя");
         }
@@ -32,11 +42,19 @@ public class UserEventMapper {
         if (updatedFields.length != NUMBER_OF_USER_FIELDS) {
             throw new RuntimeException("Неправильное количество введенных для обновления полей.");
         }
-        String name = null;
+        String firstName = null;
+        String middleName = null;
+        String lastName = null;
         if (!updatedFields[0].equals(".")) {
-            name = updatedFields[0];
+            firstName = updatedFields[0];
         }
-        return new UserEditEvent(getIdFromString(idAndFields[0]), name);
+        if (!updatedFields[1].equals(".")) {
+            middleName = updatedFields[1];
+        }
+        if (!updatedFields[2].equals(".")) {
+            lastName = updatedFields[2];
+        }
+        return new UserEditEvent(getIdFromString(idAndFields[0]), firstName, middleName, lastName);
     }
 
     public static UserViewEvent toUserViewEvent(String args) {

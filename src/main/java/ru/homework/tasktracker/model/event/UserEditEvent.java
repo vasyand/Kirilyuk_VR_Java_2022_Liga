@@ -7,5 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserEditEvent {
     private final Long userId;
-    private final String name;
+    private final String firstName;
+    private final String middleName;
+    private final String lastName;
 }

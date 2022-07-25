@@ -21,11 +21,21 @@ public class UserEditStrategy implements Strategy {
     public StrategyResponse execute(String argument) {
         UserEditEvent userEditEvent = toUserEditEvent(argument);
         User updatingUser = userService.findById(userEditEvent.getUserId());
-        if (userEditEvent.getName() != null) {
-            updatingUser.setName(userEditEvent.getName());
-        }
+        merge(updatingUser, userEditEvent);
         userService.update(updatingUser);
         return new StrategyResponse("Пользователь успешно изменен!");
+    }
+
+    private void merge(User user, UserEditEvent userEditEvent) {
+        if (userEditEvent.getFirstName() != null) {
+            user.setFirstName(userEditEvent.getFirstName());
+        }
+        if (userEditEvent.getMiddleName() != null) {
+            user.setMiddleName(userEditEvent.getMiddleName());
+        }
+        if (userEditEvent.getLastName() != null) {
+            user.setLastName(userEditEvent.getLastName());
+        }
     }
 
     @Override

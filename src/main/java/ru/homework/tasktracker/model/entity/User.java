@@ -1,15 +1,18 @@
 package ru.homework.tasktracker.model.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import ru.homework.tasktracker.util.MessageHelper;
 
 import javax.persistence.*;
 import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -19,19 +22,39 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String email;
+    private String password;
 
-    @OneToMany(mappedBy = "user",
-            cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     @Fetch(FetchMode.JOIN)
     private List<Task> tasks;
 
-    public User(String name) {
-        this.name = name;
+    @ManyToMany
+    @Fetch(FetchMode.JOIN)
+    private List<Project> projects;
+
+    public User(String firstName, String middleName, String lastName, String email, String password) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
     }
 
     @Override
     public String toString() {
-        return "   " + name + " с id - " + id;
+        return String.format("%s %s %s с id - %s\n", lastName, firstName, middleName, id)
+                + MessageHelper.createMessageFromListOfEntities(
+                "Его задачи: ",
+                "У него нет задач",
+                tasks)
+                + MessageHelper.createMessageFromListOfEntities(
+                "Проекты, в которых он участвует",
+                "Он не участвует в проектах",
+                projects
+        );
     }
 }

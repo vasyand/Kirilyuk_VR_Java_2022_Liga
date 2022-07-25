@@ -11,5 +11,6 @@ public class TaskCreateEvent {
     private final String title;
     private final String description;
     private final Long userId;
+    private final Long projectId;
     private final LocalDate date;
 }

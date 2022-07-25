@@ -11,10 +11,10 @@ import static ru.homework.tasktracker.util.StringParser.getIdFromString;
 public class TaskEventMapper {
 
     public static TaskCreateEvent toTaskCreateEvent(String args) {
-        int NUMBER_OF_TASK_FIELDS = 4;
+        int NUMBER_OF_TASK_FIELDS = 5;
         if (args == null) {
             throw new RuntimeException("Для создания задачи надо ввести ее данные в виде: " +
-                    "id,заголовок,описание,id пользователя,дата");
+                    "заголовок,описание,id пользователя, id проекта, дата");
         }
         String[] taskFields = args.split(",");
         if (taskFields.length != NUMBER_OF_TASK_FIELDS) {
@@ -24,7 +24,8 @@ public class TaskEventMapper {
                 taskFields[0],
                 taskFields[1],
                 getIdFromString(taskFields[2]),
-                getDateFromString(taskFields[3])
+                getIdFromString(taskFields[3]),
+                getDateFromString(taskFields[4])
         );
     }
 
@@ -36,7 +37,7 @@ public class TaskEventMapper {
     }
 
     public static TaskEditEvent toTaskEditEvent(String args) {
-        int NUMBER_OF_TASK_FIELDS = 5;
+        int NUMBER_OF_TASK_FIELDS = 6;
         if (args == null) {
             throw new RuntimeException("Для редактирования задачи надо ввести его id и данные в виде: " +
                     "id заголовок,описание,id пользователя,дата,статус");
@@ -45,13 +46,14 @@ public class TaskEventMapper {
         String[] updatedFields = args.substring(idAndFields[0].length()).trim().split(",");
         if (updatedFields.length != NUMBER_OF_TASK_FIELDS) {
             throw new RuntimeException("Неправильное количество введенных для обновления полей." +
-                    "Если какие-то поля не обновляются, их надо заменить точками, напирмер: .,.,.,.,RUN");
+                    "Если какие-то поля не обновляются, их надо заменить точками, напирмер: .,.,.,.,.,RUN");
         }
 
         Long taskId = getIdFromString(idAndFields[0]);
         String title = null;
         String description = null;
         Long userId = null;
+        Long projectId = null;
         LocalDate date = null;
         TaskStatus status = null;
         if (!updatedFields[0].equals(".")) {
@@ -64,12 +66,15 @@ public class TaskEventMapper {
             userId = getIdFromString(updatedFields[2]);
         }
         if (!updatedFields[3].equals(".")) {
-            date = getDateFromString(updatedFields[3]);
+            projectId = getIdFromString(updatedFields[3]);
         }
-        if (!updatedFields[4].equals(".") && TaskStatus.getStatusSet().contains(updatedFields[4])) {
-            status = TaskStatus.valueOf(updatedFields[4]);
+        if (!updatedFields[4].equals(".")) {
+            date = getDateFromString(updatedFields[4]);
         }
-        return new TaskEditEvent(taskId, title, description, userId, date, status);
+        if (!updatedFields[5].equals(".") && TaskStatus.getStatusSet().contains(updatedFields[4])) {
+            status = TaskStatus.valueOf(updatedFields[5]);
+        }
+        return new TaskEditEvent(taskId, title, description, userId, projectId, date, status);
     }
 
     public static TaskViewEvent toTaskViewEvent(String args) {

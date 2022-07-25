@@ -11,6 +11,7 @@ import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
 
 import static ru.homework.tasktracker.mapper.UserEventMapper.*;
+import static ru.homework.tasktracker.util.MessageHelper.createMessageFromEntity;
 import static ru.homework.tasktracker.util.MessageHelper.createMessageFromListOfEntities;
 
 @Component
@@ -24,12 +25,7 @@ public class UserViewTaskStrategy implements Strategy {
         StrategyResponse strategyResponse = new StrategyResponse();
         UserViewTaskEvent userViewTaskEvent = toUserViewTaskEvent(argument);
         User user = userService.findById(userViewTaskEvent.getId(), userViewTaskEvent.getUserFilter());
-        strategyResponse.setMessage(createMessageFromListOfEntities(
-                String.format("Список задач со статусом %s у пользователя %s: ",
-                        userViewTaskEvent.getUserFilter().getTaskStatus(), user.getName()),
-                String.format("Задач со статусом %s у пользователя %s сейчас нет ",
-                        userViewTaskEvent.getUserFilter().getTaskStatus(), user.getName()),
-                user.getTasks()));
+        strategyResponse.setMessage(createMessageFromEntity(user));
         return strategyResponse;
     }
 

@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
+import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.entity.User;
 import ru.homework.tasktracker.model.event.TaskEditEvent;
+import ru.homework.tasktracker.service.ProjectService;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
@@ -18,7 +20,7 @@ import static ru.homework.tasktracker.mapper.TaskEventMapper.toTaskEditEvent;
 public class TaskEditStrategy implements Strategy {
     private final TaskService taskService;
     private final UserService userService;
-
+    private final ProjectService projectService;
 
     @Override
     public StrategyResponse execute(String argument) {
@@ -37,8 +39,12 @@ public class TaskEditStrategy implements Strategy {
             task.setDescription(task.getDescription());
         }
         if (taskEditEvent.getUserId() != null) {
-            User userForTask = userService.findById(taskEditEvent.getTaskId());
+            User userForTask = userService.findById(taskEditEvent.getUserId());
             task.setUser(userForTask);
+        }
+        if (taskEditEvent.getProjectId() != null) {
+            Project project = projectService.findById(taskEditEvent.getProjectId());
+            task.setProject(project);
         }
         if (taskEditEvent.getDate() != null) {
             task.setDate(taskEditEvent.getDate());
