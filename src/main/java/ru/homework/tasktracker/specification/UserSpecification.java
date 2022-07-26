@@ -7,13 +7,33 @@ import ru.homework.tasktracker.model.filter.UserFilter;
 import javax.persistence.criteria.*;
 import java.time.LocalDate;
 
+import static org.springframework.data.jpa.domain.Specification.*;
+
 public class UserSpecification {
 
-    public static Specification<User> getUserById(Long id) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(User_.id), id);
+    public static Specification<User> generateSpecificationByUserFilter(UserFilter userFilter) {
+        return where(filterByFirstName(userFilter.getFirstName()))
+                .and(filterByMiddleName(userFilter.getMiddleName()))
+                .and(filterByLastName(userFilter.getLastName()))
+                .and(filterByTask(userFilter));
     }
 
-    public static Specification<User> generateSpecificationByUserFilter(UserFilter userFilter) {
+    private static Specification<User> filterByFirstName(String firstName) {
+        if (firstName == null) return null;
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(User_.FIRST_NAME), firstName);
+    }
+
+    private static Specification<User> filterByMiddleName(String middleName) {
+        if (middleName == null) return null;
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(User_.MIDDLE_NAME), middleName);
+    }
+
+    private static Specification<User> filterByLastName(String lastName) {
+        if (lastName == null) return null;
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(User_.LAST_NAME), lastName);
+    }
+
+    private static Specification<User> filterByTask(UserFilter userFilter) {
         return (root, query, criteriaBuilder) -> {
             ListJoin<User, Task> tasks = root.join(User_.tasks);
             return criteriaBuilder.and(

@@ -5,7 +5,7 @@ import ru.homework.tasktracker.model.TaskStrategyName;
 import ru.homework.tasktracker.model.UserStrategyName;
 
 @Slf4j
-public class EventHelper {
+public class EventHelperUtil {
     private final static int NUMBER_EVENT_FIELDS_WITHOUT_COMMAND = 1;
 
     public static boolean isValidEvent(String event) {

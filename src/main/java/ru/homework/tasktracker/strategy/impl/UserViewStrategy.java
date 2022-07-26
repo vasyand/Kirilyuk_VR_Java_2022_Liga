@@ -9,11 +9,8 @@ import ru.homework.tasktracker.model.event.UserViewEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
 
-import java.util.List;
-
 import static ru.homework.tasktracker.mapper.UserEventMapper.toUserViewEvent;
-import static ru.homework.tasktracker.util.MessageHelper.createMessageFromEntity;
-import static ru.homework.tasktracker.util.MessageHelper.createMessageFromListOfEntities;
+import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromEntity;
 
 @Component
 @RequiredArgsConstructor
@@ -24,16 +21,8 @@ public class UserViewStrategy implements Strategy {
     public StrategyResponse execute(String argument) {
         StrategyResponse strategyResponse = new StrategyResponse();
         UserViewEvent userViewEvent = toUserViewEvent(argument);
-        if (userViewEvent.getUserId() == null) {
-            List<User> users = userService.findAll();
-            strategyResponse.setMessage(createMessageFromListOfEntities(
-                    "Список всех пользователей: \n",
-                    "В бд вообще нет пользователей",
-                    users));
-        } else {
-            User user = userService.findById(userViewEvent.getUserId());
-            strategyResponse.setMessage(createMessageFromEntity(user));
-        }
+        User user = userService.findById(userViewEvent.getUserId());
+        strategyResponse.setMessage(createMessageFromEntity(user));
         return strategyResponse;
     }
 

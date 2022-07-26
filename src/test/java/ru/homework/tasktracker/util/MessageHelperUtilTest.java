@@ -1,6 +1,5 @@
 package ru.homework.tasktracker.util;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -8,9 +7,9 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.homework.tasktracker.util.MessageHelper.createMessageFromListOfEntities;
+import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromListOfEntities;
 
-class MessageHelperTest {
+class MessageHelperUtilTest {
 
     @Test
     @DisplayName("Создание сообщения для вывода из заполненного списка сущностей")

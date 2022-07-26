@@ -10,7 +10,7 @@ import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
 
 import static ru.homework.tasktracker.mapper.UserEventMapper.toUserViewWithMaxNumberTasksEvent;
-import static ru.homework.tasktracker.util.MessageHelper.createMessageFromEntity;
+import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromEntity;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +28,6 @@ public class UserViewWithMaxNumberTasksStrategy implements Strategy {
 
     @Override
     public StrategyName getStrategyName() {
-        return StrategyName.USER_VIEWMT;
+        return StrategyName.USER_WITH_MAX_NUMBER_TASKS;
     }
 }

@@ -2,11 +2,13 @@ package ru.homework.tasktracker.mapper;
 
 import ru.homework.tasktracker.model.entity.TaskStatus;
 import ru.homework.tasktracker.model.event.*;
+import ru.homework.tasktracker.model.filter.TaskFilter;
+import ru.homework.tasktracker.model.filter.UserFilter;
 
 import java.time.LocalDate;
 
-import static ru.homework.tasktracker.util.StringParser.getDateFromString;
-import static ru.homework.tasktracker.util.StringParser.getIdFromString;
+import static ru.homework.tasktracker.util.StringParserUtil.getDateFromString;
+import static ru.homework.tasktracker.util.StringParserUtil.getIdFromString;
 
 public class TaskEventMapper {
 
@@ -83,5 +85,24 @@ public class TaskEventMapper {
         return new TaskViewEvent(taskId);
     }
 
+    public static TaskViewAllEvent toTaskViewAllEvent(String args) {
+       TaskFilter taskFilter = new TaskFilter();
+        if (args != null) {
+            fillTaskFilter(args, taskFilter);
+        }
+        return new TaskViewAllEvent(taskFilter);
+    }
+
+    private static void fillTaskFilter(String args, TaskFilter taskFilter) {
+        String[] filters = args.split("<>");
+        for (String filter : filters) {
+            String[] filterAndArg = filter.split("=");
+            if (filterAndArg.length > 1) {
+                String concreteFilter = filterAndArg[0];
+                String filterArg = filterAndArg[1];
+                taskFilter.setFilter(concreteFilter, filterArg);
+            }
+        }
+    }
 
 }

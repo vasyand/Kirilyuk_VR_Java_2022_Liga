@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import ru.homework.tasktracker.util.MessageHelper;
+import ru.homework.tasktracker.util.MessageHelperUtil;
 
 import javax.persistence.*;
 import java.util.List;
@@ -47,11 +47,11 @@ public class User {
     @Override
     public String toString() {
         return String.format("%s %s %s с id - %s\n", lastName, firstName, middleName, id)
-                + MessageHelper.createMessageFromListOfEntities(
+                + MessageHelperUtil.createMessageFromListOfEntities(
                 "Его задачи: ",
                 "У него нет задач",
                 tasks)
-                + MessageHelper.createMessageFromListOfEntities(
+                + MessageHelperUtil.createMessageFromListOfEntities(
                 "Проекты, в которых он участвует",
                 "Он не участвует в проектах",
                 projects

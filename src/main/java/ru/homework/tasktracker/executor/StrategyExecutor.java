@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.*;
 import ru.homework.tasktracker.model.event.Event;
 import ru.homework.tasktracker.strategy.Strategy;
-import ru.homework.tasktracker.util.EventHelper;
+import ru.homework.tasktracker.util.EventHelperUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,16 +23,12 @@ public class StrategyExecutor {
         strategies.forEach(s -> strategiesByType.put(s.getStrategyName(), s));
     }
 
-    public StrategyResponse executeEvent(String eventString) {
-        if (!EventHelper.isValidEvent(eventString)) {
+    public StrategyResponse executeStrategy(String eventString) {
+        if (!EventHelperUtil.isValidEvent(eventString)) {
             throw new RuntimeException("Событие невалидное");
         }
-        return executeStrategy(eventString);
-    }
-
-    private StrategyResponse executeStrategy(String eventString) {
         StrategyResponse strategyResponse = null;
-        if (EventHelper.isUserStrategy(eventString)) {
+        if (EventHelperUtil.isUserStrategy(eventString)) {
             Event event = new Event(eventString);
             strategyResponse = strategiesByType.get(event.getStrategyName()).execute(event.getArgs());
         }
@@ -41,4 +37,9 @@ public class StrategyExecutor {
         }
         return strategyResponse;
     }
+
+    public StrategyResponse executeStrategy(StrategyName strategyName, String args) {
+        return strategiesByType.get(strategyName).execute(args);
+    }
+
 }

@@ -6,6 +6,6 @@ import ru.homework.tasktracker.model.filter.UserFilter;
 
 @Getter
 @AllArgsConstructor
-public class UserViewEvent {
-    private final Long userId;
+public class UserViewAllEvent {
+    private final UserFilter userFilter;
 }

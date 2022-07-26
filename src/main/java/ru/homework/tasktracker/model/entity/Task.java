@@ -1,12 +1,11 @@
 package ru.homework.tasktracker.model.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import ru.homework.tasktracker.util.MessageHelper;
+import ru.homework.tasktracker.util.MessageHelperUtil;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -60,7 +59,7 @@ public class Task {
                 "   Описание: " + description + "\n" +
                 "   Дедлайн: " + date + "\n" +
                 "   Статус: " + taskStatus.getDescription() +
-                MessageHelper.createMessageFromListOfEntities(
+                MessageHelperUtil.createMessageFromListOfEntities(
                         "Комментарии: ",
                         "Комментариев к задаче нет",
                         comments);

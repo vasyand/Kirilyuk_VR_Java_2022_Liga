@@ -14,6 +14,10 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @Setter
 public class UserFilter {
+
+    private String firstName;
+    private String middleName;
+    private String lastName;
     private TaskStatus taskStatus;
     private LocalDate to;
     private LocalDate from;
@@ -21,6 +25,9 @@ public class UserFilter {
     public void setFilter(String filter, String argument) {
         switch (filter) {
             case "status" -> taskStatus = TaskStatus.valueOf(argument);
+            case "firstName" -> firstName = argument;
+            case "middleName" -> middleName = argument;
+            case "lastName" -> lastName = argument;
             case "date" -> setDate(argument);
             default -> throw new RuntimeException("Такого фильтра пока еще нет");
         }

@@ -3,7 +3,7 @@ package ru.homework.tasktracker.util;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MessageHelper {
+public class MessageHelperUtil {
     public static String createMessageFromListOfEntities(String prefix, String emptyMessage, List<?> list) {
         if (prefix == null) {
             prefix = "";

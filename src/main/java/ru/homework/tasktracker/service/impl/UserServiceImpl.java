@@ -7,13 +7,10 @@ import ru.homework.tasktracker.model.filter.UserFilter;
 import ru.homework.tasktracker.repository.UserRepository;
 import ru.homework.tasktracker.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Comparator.comparingInt;
-import static org.springframework.data.jpa.domain.Specification.where;
 import static ru.homework.tasktracker.specification.UserSpecification.generateSpecificationByUserFilter;
-import static ru.homework.tasktracker.specification.UserSpecification.getUserById;
 
 @Service
 @RequiredArgsConstructor
@@ -27,20 +24,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Long id, UserFilter userFilter) {
-        User user =  userRepository.findOne(where(getUserById(id))
-                .and(generateSpecificationByUserFilter(userFilter)))
-                .orElse(null);
-        if (user == null) {
-            user = findById(id);
-            user.setTasks(new ArrayList<>());
-        }
-        return user;
-    }
-
-    @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> findAll(UserFilter userFilter) {
+        return userRepository.findAll(generateSpecificationByUserFilter(userFilter));
     }
 
     @Override

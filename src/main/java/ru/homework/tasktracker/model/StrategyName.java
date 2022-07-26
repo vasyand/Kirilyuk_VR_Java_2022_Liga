@@ -5,10 +5,12 @@ public enum StrategyName {
     TASK_DELETE,
     TASK_EDIT,
     TASK_VIEW,
+
+    TASK_VIEW_ALL,
     USER_CREATE,
     USER_DELETE,
     USER_EDIT,
     USER_VIEW,
-    USER_VIEWT,
-    USER_VIEWMT
+    USER_VIEW_ALL,
+    USER_WITH_MAX_NUMBER_TASKS
 }

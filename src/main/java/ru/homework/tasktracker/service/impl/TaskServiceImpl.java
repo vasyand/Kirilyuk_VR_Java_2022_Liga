@@ -3,10 +3,14 @@ package ru.homework.tasktracker.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.homework.tasktracker.model.entity.Task;
+import ru.homework.tasktracker.model.filter.TaskFilter;
 import ru.homework.tasktracker.repository.TaskRepository;
 import ru.homework.tasktracker.service.TaskService;
+import ru.homework.tasktracker.specification.TaskSpecification;
 
 import java.util.List;
+
+import static ru.homework.tasktracker.specification.TaskSpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +24,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> findAll() {
-        return taskRepository.findAll();
+    public List<Task> findAll(TaskFilter taskFilter) {
+        return taskRepository.findAll(generateSpecificationByTaskFilter(taskFilter));
     }
 
     @Override

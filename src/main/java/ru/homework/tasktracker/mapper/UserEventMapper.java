@@ -3,7 +3,7 @@ package ru.homework.tasktracker.mapper;
 import ru.homework.tasktracker.model.event.*;
 import ru.homework.tasktracker.model.filter.UserFilter;
 
-import static ru.homework.tasktracker.util.StringParser.getIdFromString;
+import static ru.homework.tasktracker.util.StringParserUtil.getIdFromString;
 
 
 public class UserEventMapper {
@@ -58,9 +58,18 @@ public class UserEventMapper {
     }
 
     public static UserViewEvent toUserViewEvent(String args) {
-        Long userId = null;
-        if (args != null) userId = getIdFromString(args);
-        return new UserViewEvent(userId);
+        if (args == null) {
+            throw new RuntimeException("Для просмотра пользователя псоле команды надо ввести его id");
+        }
+        return new UserViewEvent(getIdFromString(args));
+    }
+
+    public static UserViewAllEvent toUserViewAllEvent(String args) {
+        UserFilter userFilter = new UserFilter();
+        if (args != null) {
+            fillUserFilter(args, userFilter);
+        }
+        return new UserViewAllEvent(userFilter);
     }
 
     public static UserViewWithMaxNumberTasksEvent toUserViewWithMaxNumberTasksEvent(String args) {
@@ -71,17 +80,6 @@ public class UserEventMapper {
         return new UserViewWithMaxNumberTasksEvent(userFilter);
     }
 
-    public static UserViewTaskEvent toUserViewTaskEvent(String args) {
-        if (args == null) {
-            throw new RuntimeException("Для просмотра задач пользователя надо ввести его id и фильтры (опционально)");
-        }
-        String[] userIdAndFilters = args.split(" ");
-        UserFilter userFilter = new UserFilter();
-        if (userIdAndFilters.length > 1) {
-            fillUserFilter(args.substring(userIdAndFilters[0].length()).trim(), userFilter);
-        }
-        return new UserViewTaskEvent(getIdFromString(userIdAndFilters[0]), userFilter);
-    }
 
     private static void fillUserFilter(String args, UserFilter userFilter) {
         String[] filters = args.split("<>");

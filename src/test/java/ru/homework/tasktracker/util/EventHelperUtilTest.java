@@ -9,9 +9,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.homework.tasktracker.util.EventHelper.isValidEvent;
+import static ru.homework.tasktracker.util.EventHelperUtil.isValidEvent;
 
-class EventHelperTest {
+class EventHelperUtilTest {
 
     @Test
     @DisplayName("Проверка валидности значения null")
