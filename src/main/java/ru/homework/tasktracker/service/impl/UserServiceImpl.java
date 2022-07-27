@@ -35,12 +35,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(User user) {
+        this.findById(user.getId());
         userRepository.save(user);
     }
 
     @Override
     public void delete(Long id) {
-        User user = findById(id);
+        User user = this.findById(id);
         userRepository.delete(user);
     }
 

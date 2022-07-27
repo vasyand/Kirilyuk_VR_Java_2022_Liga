@@ -32,6 +32,20 @@ public class UserStrategyArgumentMapper {
         return new UserDeleteArgument(getIdFromString(args));
     }
 
+    public static UserAddProjectArgument toAddProjectArgument(String args) {
+        int NUMBER_FIELDS_FOR_ADDING_PROJECT = 2;
+        if (args == null) {
+            throw new RuntimeException(
+                    "Для добавления проекта пользователю после команды надо ввести его id и id проекта");
+        }
+        String[] userIdAndProjectId = args.split(" ");
+        if (userIdAndProjectId.length != NUMBER_FIELDS_FOR_ADDING_PROJECT) {
+            throw new RuntimeException("Неправильное количество введенных полей.");
+        }
+        return new UserAddProjectArgument(getIdFromString(userIdAndProjectId[0]),
+                getIdFromString(userIdAndProjectId[1]));
+    }
+
     public static UserEditArgument toUserEditArgument(String args) {
         int NUMBER_OF_USER_FIELDS = 3;
         if (args == null) {

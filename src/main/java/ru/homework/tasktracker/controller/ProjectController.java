@@ -11,49 +11,37 @@ import static ru.homework.tasktracker.model.StrategyName.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/api/v2/users")
-public class UserController {
+@RequestMapping("api/v2/projects")
+public class ProjectController {
     private final StrategyExecutor strategyExecutor;
 
     @GetMapping("/{id}")
     public ResponseEntity<String> findById(@PathVariable String id, @RequestParam String args) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_VIEW, id + " " + args);
+        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_VIEW, id + " " + args);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<String> findAll(@RequestParam String filters) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_VIEW_ALL, filters);
+        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_VIEW_ALL, filters);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody String args) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_CREATE, args);
+        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_CREATE, args);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}/projects")
-    public ResponseEntity<String> addProject(@PathVariable String id, @RequestBody String projectId) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_ADD_PROJECT, id + " " + projectId);
-        return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<String> update(@RequestBody String args) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_EDIT, args);
+        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_EDIT, args);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_DELETE, id);
-        return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
-    }
-
-    @GetMapping("/search-with-max-number-tasks")
-    public ResponseEntity<String> searchWithMaxNumberTasks(@RequestParam String filters) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_WITH_MAX_NUMBER_TASKS, filters);
+        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_DELETE, id);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 }
