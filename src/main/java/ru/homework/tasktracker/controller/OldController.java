@@ -12,7 +12,7 @@ import ru.homework.tasktracker.model.StrategyResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/api/v1")
+@RequestMapping("/api/v1")
 public class OldController {
     private final StrategyExecutor strategyExecutor;
 

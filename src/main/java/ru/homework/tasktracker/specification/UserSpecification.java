@@ -35,7 +35,7 @@ public class UserSpecification {
 
     private static Specification<User> filterByTask(UserFilter userFilter) {
         return (root, query, criteriaBuilder) -> {
-            ListJoin<User, Task> tasks = root.join(User_.tasks);
+            Join<User, Task> tasks = root.join(User_.tasks, JoinType.LEFT);
             return criteriaBuilder.and(
                     filterByTaskStatus(userFilter.getTaskStatus(), tasks, criteriaBuilder),
                     filterByTaskDates(userFilter.getFrom(), userFilter.getTo(), tasks, criteriaBuilder)

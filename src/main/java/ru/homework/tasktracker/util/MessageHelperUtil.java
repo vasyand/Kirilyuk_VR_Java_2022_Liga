@@ -21,7 +21,7 @@ public class MessageHelperUtil {
 
     public static String createMessageFromEntity(Object object) {
         if (object == null) return  "";
-        return createMessageFromListOfEntities("", "", List.of(object));
+        return createMessageFromListOfEntities("\n", "", List.of(object));
     }
 
 

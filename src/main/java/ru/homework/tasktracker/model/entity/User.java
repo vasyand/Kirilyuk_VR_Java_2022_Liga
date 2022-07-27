@@ -9,6 +9,7 @@ import org.hibernate.annotations.FetchMode;
 import ru.homework.tasktracker.util.MessageHelperUtil;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -33,7 +34,7 @@ public class User {
     private List<Task> tasks;
 
     @ManyToMany
-    @Fetch(FetchMode.JOIN)
+    @JoinTable(name = "users_projects")
     private List<Project> projects;
 
     public User(String firstName, String middleName, String lastName, String email, String password) {
@@ -48,11 +49,11 @@ public class User {
     public String toString() {
         return String.format("%s %s %s с id - %s\n", lastName, firstName, middleName, id)
                 + MessageHelperUtil.createMessageFromListOfEntities(
-                "Его задачи: ",
+                "Его задачи: \n",
                 "У него нет задач",
                 tasks)
                 + MessageHelperUtil.createMessageFromListOfEntities(
-                "Проекты, в которых он участвует",
+                "Проекты, в которых он участвует: \n",
                 "Он не участвует в проектах",
                 projects
         );

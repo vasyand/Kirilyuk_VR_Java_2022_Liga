@@ -11,18 +11,18 @@ import static ru.homework.tasktracker.model.StrategyName.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/api/v2/users")
+@RequestMapping("/api/v2/users")
 public class UserController {
     private final StrategyExecutor strategyExecutor;
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> findById(@PathVariable String id, @RequestParam String args) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_VIEW, id + " " + args);
+    public ResponseEntity<String> findById(@PathVariable String id) {
+        StrategyResponse response = strategyExecutor.executeStrategy(USER_VIEW, id);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<String> findAll(@RequestParam String filters) {
+    public ResponseEntity<String> findAll(@RequestParam(required = false) String filters) {
         StrategyResponse response = strategyExecutor.executeStrategy(USER_VIEW_ALL, filters);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
@@ -39,9 +39,9 @@ public class UserController {
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<String> update(@RequestBody String args) {
-        StrategyResponse response = strategyExecutor.executeStrategy(USER_EDIT, args);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> update(@PathVariable String id, @RequestBody String args) {
+        StrategyResponse response = strategyExecutor.executeStrategy(USER_EDIT, id + " " + args);
         return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
     }
 
