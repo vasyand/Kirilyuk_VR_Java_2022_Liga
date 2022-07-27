@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.User;
-import ru.homework.tasktracker.model.event.UserViewWithMaxNumberTasksEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.UserViewWithMaxNumberTasksArgument;
 
-import static ru.homework.tasktracker.mapper.UserEventMapper.toUserViewWithMaxNumberTasksEvent;
+import static ru.homework.tasktracker.strategy.mapper.UserStrategyArgumentMapper.toUserViewWithMaxNumberTasksArgument;
 import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromEntity;
 
 @Component
@@ -19,11 +19,9 @@ public class UserViewWithMaxNumberTasksStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        UserViewWithMaxNumberTasksEvent event = toUserViewWithMaxNumberTasksEvent(argument);
-        StrategyResponse strategyResponse = new StrategyResponse();
+        UserViewWithMaxNumberTasksArgument event = toUserViewWithMaxNumberTasksArgument(argument);
         User user = userService.findUserWithMaxNumberTasks(event.getUserFilter());
-        strategyResponse.setMessage(createMessageFromEntity(user));
-        return strategyResponse;
+        return new StrategyResponse(createMessageFromEntity(user));
     }
 
     @Override

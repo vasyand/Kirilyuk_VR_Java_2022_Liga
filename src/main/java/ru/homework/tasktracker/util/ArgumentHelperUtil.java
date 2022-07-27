@@ -1,11 +1,10 @@
 package ru.homework.tasktracker.util;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.homework.tasktracker.model.TaskStrategyName;
-import ru.homework.tasktracker.model.UserStrategyName;
+import ru.homework.tasktracker.model.StrategyName;
 
 @Slf4j
-public class EventHelperUtil {
+public class ArgumentHelperUtil {
     private final static int NUMBER_EVENT_FIELDS_WITHOUT_COMMAND = 1;
 
     public static boolean isValidEvent(String event) {
@@ -25,8 +24,8 @@ public class EventHelperUtil {
         }
         String strategyName = eventArgs[1].toUpperCase();
         try {
-            if (type.equals("user")) UserStrategyName.valueOf(strategyName);
-            if (type.equals("task")) TaskStrategyName.valueOf(strategyName);
+            if (type.equals("user")) StrategyName.valueOf("USER_" + strategyName);
+            if (type.equals("task")) StrategyName.valueOf("TASK_" + strategyName);
         } catch (IllegalArgumentException e) {
             log.error("Такой команды не существует");
             return false;

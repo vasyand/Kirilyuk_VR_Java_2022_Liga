@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
-import ru.homework.tasktracker.model.event.UserDeleteEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.UserDeleteArgument;
 
-import static ru.homework.tasktracker.mapper.UserEventMapper.toUserDeleteEvent;
+import static ru.homework.tasktracker.strategy.mapper.UserStrategyArgumentMapper.toUserDeleteArgument;
 
 @Component
 @RequiredArgsConstructor
@@ -17,8 +17,8 @@ public class UserDeleteStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        UserDeleteEvent userDeleteEvent = toUserDeleteEvent(argument);
-        userService.delete(userDeleteEvent.getUserId());
+        UserDeleteArgument userDeleteArgument = toUserDeleteArgument(argument);
+        userService.delete(userDeleteArgument.getUserId());
         return new StrategyResponse("Пользователь успешно удален!");
     }
 

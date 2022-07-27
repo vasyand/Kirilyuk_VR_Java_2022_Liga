@@ -8,13 +8,13 @@ import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.entity.TaskStatus;
 import ru.homework.tasktracker.model.entity.User;
-import ru.homework.tasktracker.model.event.TaskCreateEvent;
 import ru.homework.tasktracker.service.ProjectService;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.TaskCreateArgument;
 
-import static ru.homework.tasktracker.mapper.TaskEventMapper.toTaskCreateEvent;
+import static ru.homework.tasktracker.strategy.mapper.TaskStrategyArgumentMapper.toTaskCreateArgument;
 
 @Component
 @RequiredArgsConstructor
@@ -26,14 +26,14 @@ public class TaskCreateStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        TaskCreateEvent taskCreateEvent = toTaskCreateEvent(argument);
-        User user = userService.findById(taskCreateEvent.getUserId());
-        Project project = projectService.findById(taskCreateEvent.getProjectId());
-        taskService.save(new Task(taskCreateEvent.getTitle(),
-                taskCreateEvent.getDescription(),
+        TaskCreateArgument taskCreateArgument = toTaskCreateArgument(argument);
+        User user = userService.findById(taskCreateArgument.getUserId());
+        Project project = projectService.findById(taskCreateArgument.getProjectId());
+        taskService.save(new Task(taskCreateArgument.getTitle(),
+                taskCreateArgument.getDescription(),
                 user,
                 project,
-                taskCreateEvent.getDate(),
+                taskCreateArgument.getDate(),
                 TaskStatus.CREATED));
         return new StrategyResponse("Задача успешно сохранена!");
     }

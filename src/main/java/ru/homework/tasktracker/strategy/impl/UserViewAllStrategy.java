@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.User;
-import ru.homework.tasktracker.model.event.UserViewAllEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.UserViewAllArgument;
 
 import java.util.List;
 
-import static ru.homework.tasktracker.mapper.UserEventMapper.toUserViewAllEvent;
+import static ru.homework.tasktracker.strategy.mapper.UserStrategyArgumentMapper.toUserViewAllArgument;
 import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromListOfEntities;
 
 @Component
@@ -21,14 +21,12 @@ public class UserViewAllStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        StrategyResponse strategyResponse = new StrategyResponse();
-        UserViewAllEvent userViewAllEvent = toUserViewAllEvent(argument);
-        List<User> users = userService.findAll(userViewAllEvent.getUserFilter());
-        strategyResponse.setMessage(createMessageFromListOfEntities(
+        UserViewAllArgument userViewAllArgument = toUserViewAllArgument(argument);
+        List<User> users = userService.findAll(userViewAllArgument.getUserFilter());
+        return new StrategyResponse(createMessageFromListOfEntities(
                 "Список пользователей: \n",
                 "Пользователей нет",
                 users));
-        return strategyResponse;
     }
 
     @Override

@@ -1,10 +1,10 @@
-package ru.homework.tasktracker.model.event;
+package ru.homework.tasktracker.strategy.argument;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class TaskDeleteEvent {
+public class TaskViewArgument {
     private final Long taskId;
 }

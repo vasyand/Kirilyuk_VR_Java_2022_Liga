@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.User;
-import ru.homework.tasktracker.model.event.UserViewEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.UserViewArgument;
 
-import static ru.homework.tasktracker.mapper.UserEventMapper.toUserViewEvent;
+import static ru.homework.tasktracker.strategy.mapper.UserStrategyArgumentMapper.toUserViewArgument;
 import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromEntity;
 
 @Component
@@ -19,11 +19,9 @@ public class UserViewStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        StrategyResponse strategyResponse = new StrategyResponse();
-        UserViewEvent userViewEvent = toUserViewEvent(argument);
-        User user = userService.findById(userViewEvent.getUserId());
-        strategyResponse.setMessage(createMessageFromEntity(user));
-        return strategyResponse;
+        UserViewArgument userViewArgument = toUserViewArgument(argument);
+        User user = userService.findById(userViewArgument.getUserId());
+        return new StrategyResponse(createMessageFromEntity(user));
     }
 
     @Override

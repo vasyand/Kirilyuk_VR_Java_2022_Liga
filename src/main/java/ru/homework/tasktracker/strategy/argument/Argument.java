@@ -1,14 +1,14 @@
-package ru.homework.tasktracker.model.event;
+package ru.homework.tasktracker.strategy.argument;
 
 import lombok.Getter;
 import ru.homework.tasktracker.model.StrategyName;
 
 @Getter
-public class Event {
+public class Argument {
     private StrategyName strategyName;
     private String args;
 
-    public Event(String eventString) {
+    public Argument(String eventString) {
         String[] eventArgs = eventString.split(" ");
         if (eventArgs.length > 1) {
             strategyName = StrategyName.valueOf(eventArgs[1].toUpperCase());

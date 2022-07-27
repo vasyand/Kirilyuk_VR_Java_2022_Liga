@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.model.event;
+package ru.homework.tasktracker.strategy.argument;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,6 @@ import ru.homework.tasktracker.model.filter.UserFilter;
 
 @Getter
 @AllArgsConstructor
-public class UserViewEvent {
-    private final Long userId;
+public class UserViewAllArgument {
+    private final UserFilter userFilter;
 }

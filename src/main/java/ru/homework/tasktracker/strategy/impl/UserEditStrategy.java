@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.User;
-import ru.homework.tasktracker.model.event.UserEditEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.UserEditArgument;
 
-import static ru.homework.tasktracker.mapper.UserEventMapper.toUserEditEvent;
+import static ru.homework.tasktracker.strategy.mapper.UserStrategyArgumentMapper.toUserEditArgument;
 
 @Component
 @RequiredArgsConstructor
@@ -19,22 +19,22 @@ public class UserEditStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        UserEditEvent userEditEvent = toUserEditEvent(argument);
-        User updatingUser = userService.findById(userEditEvent.getUserId());
-        merge(updatingUser, userEditEvent);
+        UserEditArgument userEditArgument = toUserEditArgument(argument);
+        User updatingUser = userService.findById(userEditArgument.getUserId());
+        merge(updatingUser, userEditArgument);
         userService.update(updatingUser);
         return new StrategyResponse("Пользователь успешно изменен!");
     }
 
-    private void merge(User user, UserEditEvent userEditEvent) {
-        if (userEditEvent.getFirstName() != null) {
-            user.setFirstName(userEditEvent.getFirstName());
+    private void merge(User user, UserEditArgument userEditArgument) {
+        if (userEditArgument.getFirstName() != null) {
+            user.setFirstName(userEditArgument.getFirstName());
         }
-        if (userEditEvent.getMiddleName() != null) {
-            user.setMiddleName(userEditEvent.getMiddleName());
+        if (userEditArgument.getMiddleName() != null) {
+            user.setMiddleName(userEditArgument.getMiddleName());
         }
-        if (userEditEvent.getLastName() != null) {
-            user.setLastName(userEditEvent.getLastName());
+        if (userEditArgument.getLastName() != null) {
+            user.setLastName(userEditArgument.getLastName());
         }
     }
 

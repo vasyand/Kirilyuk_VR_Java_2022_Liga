@@ -5,15 +5,12 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.Task;
-import ru.homework.tasktracker.model.event.TaskViewEvent;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.TaskViewArgument;
 
-import java.util.List;
-
-import static ru.homework.tasktracker.mapper.TaskEventMapper.toTaskViewEvent;
+import static ru.homework.tasktracker.strategy.mapper.TaskStrategyArgumentMapper.toTaskViewArgument;
 import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromEntity;
-import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromListOfEntities;
 
 @Component
 @RequiredArgsConstructor
@@ -23,11 +20,9 @@ public class TaskViewStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        StrategyResponse strategyResponse = new StrategyResponse();
-        TaskViewEvent taskViewEvent = toTaskViewEvent(argument);
-        Task task = taskService.findById(taskViewEvent.getTaskId());
-        strategyResponse.setMessage(createMessageFromEntity(task));
-        return strategyResponse;
+        TaskViewArgument taskViewArgument = toTaskViewArgument(argument);
+        Task task = taskService.findById(taskViewArgument.getTaskId());
+        return new StrategyResponse(createMessageFromEntity(task));
     }
 
     @Override

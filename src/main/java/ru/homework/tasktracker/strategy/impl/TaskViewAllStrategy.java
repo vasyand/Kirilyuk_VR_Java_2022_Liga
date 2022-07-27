@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.Task;
-import ru.homework.tasktracker.model.event.TaskViewAllEvent;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.TaskViewAllArgument;
 
 import java.util.List;
 
-import static ru.homework.tasktracker.mapper.TaskEventMapper.toTaskViewAllEvent;
+import static ru.homework.tasktracker.strategy.mapper.TaskStrategyArgumentMapper.toTaskViewAllArgument;
 import static ru.homework.tasktracker.util.MessageHelperUtil.createMessageFromListOfEntities;
 
 @Component
@@ -21,14 +21,12 @@ public class TaskViewAllStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        StrategyResponse strategyResponse = new StrategyResponse();
-        TaskViewAllEvent taskViewAllEvent = toTaskViewAllEvent(argument);
-        List<Task> tasks = taskService.findAll(taskViewAllEvent.getTaskFilter());
-        strategyResponse.setMessage(createMessageFromListOfEntities(
-                "Список всех задач: \n",
+        TaskViewAllArgument taskViewAllArgument = toTaskViewAllArgument(argument);
+        List<Task> tasks = taskService.findAll(taskViewAllArgument.getTaskFilter());
+        return new StrategyResponse(createMessageFromListOfEntities(
+                "Список задач: \n",
                 "Задач в бд вообще нет",
                 tasks));
-        return strategyResponse;
     }
 
     @Override

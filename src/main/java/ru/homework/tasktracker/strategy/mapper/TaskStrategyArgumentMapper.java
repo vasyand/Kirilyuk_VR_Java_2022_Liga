@@ -1,18 +1,17 @@
-package ru.homework.tasktracker.mapper;
+package ru.homework.tasktracker.strategy.mapper;
 
 import ru.homework.tasktracker.model.entity.TaskStatus;
-import ru.homework.tasktracker.model.event.*;
 import ru.homework.tasktracker.model.filter.TaskFilter;
-import ru.homework.tasktracker.model.filter.UserFilter;
+import ru.homework.tasktracker.strategy.argument.*;
 
 import java.time.LocalDate;
 
 import static ru.homework.tasktracker.util.StringParserUtil.getDateFromString;
 import static ru.homework.tasktracker.util.StringParserUtil.getIdFromString;
 
-public class TaskEventMapper {
+public class TaskStrategyArgumentMapper {
 
-    public static TaskCreateEvent toTaskCreateEvent(String args) {
+    public static TaskCreateArgument toTaskCreateArgument(String args) {
         int NUMBER_OF_TASK_FIELDS = 5;
         if (args == null) {
             throw new RuntimeException("Для создания задачи надо ввести ее данные в виде: " +
@@ -22,7 +21,7 @@ public class TaskEventMapper {
         if (taskFields.length != NUMBER_OF_TASK_FIELDS) {
             throw new RuntimeException("Неверное количество полей для создания задачи");
         }
-        return new TaskCreateEvent(
+        return new TaskCreateArgument(
                 taskFields[0],
                 taskFields[1],
                 getIdFromString(taskFields[2]),
@@ -31,14 +30,14 @@ public class TaskEventMapper {
         );
     }
 
-    public static TaskDeleteEvent toTaskDeleteEvent(String arg) {
+    public static TaskDeleteArgument toTaskDeleteArgument(String arg) {
         if (arg == null) {
-            throw new RuntimeException("Для удаления задачи после команды надо ввести его id");
+            throw new RuntimeException("Для удаления задачи после команды надо ввести ее id");
         }
-        return new TaskDeleteEvent(getIdFromString(arg));
+        return new TaskDeleteArgument(getIdFromString(arg));
     }
 
-    public static TaskEditEvent toTaskEditEvent(String args) {
+    public static TaskEditArgument toTaskEditArgument(String args) {
         int NUMBER_OF_TASK_FIELDS = 6;
         if (args == null) {
             throw new RuntimeException("Для редактирования задачи надо ввести его id и данные в виде: " +
@@ -76,21 +75,21 @@ public class TaskEventMapper {
         if (!updatedFields[5].equals(".") && TaskStatus.getStatusSet().contains(updatedFields[4])) {
             status = TaskStatus.valueOf(updatedFields[5]);
         }
-        return new TaskEditEvent(taskId, title, description, userId, projectId, date, status);
+        return new TaskEditArgument(taskId, title, description, userId, projectId, date, status);
     }
 
-    public static TaskViewEvent toTaskViewEvent(String args) {
+    public static TaskViewArgument toTaskViewArgument(String args) {
         Long taskId = null;
         if (args != null) taskId = getIdFromString(args);
-        return new TaskViewEvent(taskId);
+        return new TaskViewArgument(taskId);
     }
 
-    public static TaskViewAllEvent toTaskViewAllEvent(String args) {
+    public static TaskViewAllArgument toTaskViewAllArgument(String args) {
        TaskFilter taskFilter = new TaskFilter();
         if (args != null) {
             fillTaskFilter(args, taskFilter);
         }
-        return new TaskViewAllEvent(taskFilter);
+        return new TaskViewAllArgument(taskFilter);
     }
 
     private static void fillTaskFilter(String args, TaskFilter taskFilter) {
@@ -104,5 +103,4 @@ public class TaskEventMapper {
             }
         }
     }
-
 }

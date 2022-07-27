@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.*;
-import ru.homework.tasktracker.model.event.Event;
+import ru.homework.tasktracker.strategy.argument.Argument;
 import ru.homework.tasktracker.strategy.Strategy;
-import ru.homework.tasktracker.util.EventHelperUtil;
+import ru.homework.tasktracker.util.ArgumentHelperUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +24,13 @@ public class StrategyExecutor {
     }
 
     public StrategyResponse executeStrategy(String eventString) {
-        if (!EventHelperUtil.isValidEvent(eventString)) {
+        if (!ArgumentHelperUtil.isValidEvent(eventString)) {
             throw new RuntimeException("Событие невалидное");
         }
         StrategyResponse strategyResponse = null;
-        if (EventHelperUtil.isUserStrategy(eventString)) {
-            Event event = new Event(eventString);
-            strategyResponse = strategiesByType.get(event.getStrategyName()).execute(event.getArgs());
+        if (ArgumentHelperUtil.isUserStrategy(eventString)) {
+            Argument argument = new Argument(eventString);
+            strategyResponse = strategiesByType.get(argument.getStrategyName()).execute(argument.getArgs());
         }
         if (strategyResponse == null) {
             throw new RuntimeException("Команда введена неверно");

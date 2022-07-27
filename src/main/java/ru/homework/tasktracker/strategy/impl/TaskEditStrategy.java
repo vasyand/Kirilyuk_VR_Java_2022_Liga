@@ -7,13 +7,13 @@ import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.entity.User;
-import ru.homework.tasktracker.model.event.TaskEditEvent;
 import ru.homework.tasktracker.service.ProjectService;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.TaskEditArgument;
 
-import static ru.homework.tasktracker.mapper.TaskEventMapper.toTaskEditEvent;
+import static ru.homework.tasktracker.strategy.mapper.TaskStrategyArgumentMapper.toTaskEditArgument;
 
 @Component
 @RequiredArgsConstructor
@@ -24,33 +24,33 @@ public class TaskEditStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        TaskEditEvent taskEditEvent = toTaskEditEvent(argument);
-        Task updatedTask = taskService.findById(taskEditEvent.getTaskId());
-        merge(updatedTask, taskEditEvent);
-        taskService.update(updatedTask);
+        TaskEditArgument taskEditArgument = toTaskEditArgument(argument);
+        Task updatingTask = taskService.findById(taskEditArgument.getTaskId());
+        merge(updatingTask, taskEditArgument);
+        taskService.update(updatingTask);
         return new StrategyResponse("Задача успешно обновлена!");
     }
 
-    private void merge(Task task, TaskEditEvent taskEditEvent) {
-        if (taskEditEvent.getTitle() != null) {
-            task.setTitle(task.getTitle());
+    private void merge(Task task, TaskEditArgument taskEditArgument) {
+        if (taskEditArgument.getTitle() != null) {
+            task.setTitle(taskEditArgument.getTitle());
         }
-        if (taskEditEvent.getDescription() != null) {
-            task.setDescription(task.getDescription());
+        if (taskEditArgument.getDescription() != null) {
+            task.setDescription(taskEditArgument.getDescription());
         }
-        if (taskEditEvent.getUserId() != null) {
-            User userForTask = userService.findById(taskEditEvent.getUserId());
+        if (taskEditArgument.getUserId() != null) {
+            User userForTask = userService.findById(taskEditArgument.getUserId());
             task.setUser(userForTask);
         }
-        if (taskEditEvent.getProjectId() != null) {
-            Project project = projectService.findById(taskEditEvent.getProjectId());
+        if (taskEditArgument.getProjectId() != null) {
+            Project project = projectService.findById(taskEditArgument.getProjectId());
             task.setProject(project);
         }
-        if (taskEditEvent.getDate() != null) {
-            task.setDate(taskEditEvent.getDate());
+        if (taskEditArgument.getDate() != null) {
+            task.setDate(taskEditArgument.getDate());
         }
-        if (taskEditEvent.getStatus() != null) {
-            task.setTaskStatus(taskEditEvent.getStatus());
+        if (taskEditArgument.getStatus() != null) {
+            task.setTaskStatus(taskEditArgument.getStatus());
         }
     }
 

@@ -1,14 +1,14 @@
-package ru.homework.tasktracker.mapper;
+package ru.homework.tasktracker.strategy.mapper;
 
-import ru.homework.tasktracker.model.event.*;
 import ru.homework.tasktracker.model.filter.UserFilter;
+import ru.homework.tasktracker.strategy.argument.*;
 
 import static ru.homework.tasktracker.util.StringParserUtil.getIdFromString;
 
 
-public class UserEventMapper {
+public class UserStrategyArgumentMapper {
 
-    public static UserCreateEvent toUserCreateEvent(String args) {
+    public static UserCreateArgument toUserCreateArgument(String args) {
         int NUMBER_OF_USER_FIELDS = 5;
         if (args == null) {
             throw new RuntimeException("Для создания задачи надо ввести ее данные в виде: " +
@@ -18,21 +18,21 @@ public class UserEventMapper {
         if (userFields.length != NUMBER_OF_USER_FIELDS) {
             throw new RuntimeException("Неверное количество полей для создания пользователя");
         }
-        return new UserCreateEvent(userFields[0],
+        return new UserCreateArgument(userFields[0],
                 userFields[1],
                 userFields[2],
                 userFields[3],
                 userFields[4]);
     }
 
-    public static UserDeleteEvent toUserDeleteEvent(String args) {
+    public static UserDeleteArgument toUserDeleteArgument(String args) {
         if (args == null) {
             throw new RuntimeException("Для удаления пользователя псоле команды надо ввести его id");
         }
-        return new UserDeleteEvent(getIdFromString(args));
+        return new UserDeleteArgument(getIdFromString(args));
     }
 
-    public static UserEditEvent toUserEditEvent(String args) {
+    public static UserEditArgument toUserEditArgument(String args) {
         int NUMBER_OF_USER_FIELDS = 3;
         if (args == null) {
             throw new RuntimeException("Для редактирования пользователя надо ввести его id и данные в виде: id имя");
@@ -54,30 +54,30 @@ public class UserEventMapper {
         if (!updatedFields[2].equals(".")) {
             lastName = updatedFields[2];
         }
-        return new UserEditEvent(getIdFromString(idAndFields[0]), firstName, middleName, lastName);
+        return new UserEditArgument(getIdFromString(idAndFields[0]), firstName, middleName, lastName);
     }
 
-    public static UserViewEvent toUserViewEvent(String args) {
+    public static UserViewArgument toUserViewArgument(String args) {
         if (args == null) {
             throw new RuntimeException("Для просмотра пользователя псоле команды надо ввести его id");
         }
-        return new UserViewEvent(getIdFromString(args));
+        return new UserViewArgument(getIdFromString(args));
     }
 
-    public static UserViewAllEvent toUserViewAllEvent(String args) {
+    public static UserViewAllArgument toUserViewAllArgument(String args) {
         UserFilter userFilter = new UserFilter();
         if (args != null) {
             fillUserFilter(args, userFilter);
         }
-        return new UserViewAllEvent(userFilter);
+        return new UserViewAllArgument(userFilter);
     }
 
-    public static UserViewWithMaxNumberTasksEvent toUserViewWithMaxNumberTasksEvent(String args) {
+    public static UserViewWithMaxNumberTasksArgument toUserViewWithMaxNumberTasksArgument(String args) {
         UserFilter userFilter = new UserFilter();
         if (args != null) {
             fillUserFilter(args, userFilter);
         }
-        return new UserViewWithMaxNumberTasksEvent(userFilter);
+        return new UserViewWithMaxNumberTasksArgument(userFilter);
     }
 
 

@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import ru.homework.tasktracker.model.StrategyName;
 import ru.homework.tasktracker.model.StrategyResponse;
 import ru.homework.tasktracker.model.entity.User;
-import ru.homework.tasktracker.model.event.UserCreateEvent;
 import ru.homework.tasktracker.service.UserService;
 import ru.homework.tasktracker.strategy.Strategy;
+import ru.homework.tasktracker.strategy.argument.UserCreateArgument;
 
-import static ru.homework.tasktracker.mapper.UserEventMapper.toUserCreateEvent;
+import static ru.homework.tasktracker.strategy.mapper.UserStrategyArgumentMapper.toUserCreateArgument;
 
 @Component
 @RequiredArgsConstructor
@@ -18,13 +18,13 @@ public class UserCreateStrategy implements Strategy {
 
     @Override
     public StrategyResponse execute(String argument) {
-        UserCreateEvent userCreateEvent = toUserCreateEvent(argument);
+        UserCreateArgument userCreateArgument = toUserCreateArgument(argument);
         userService.save(new User(
-                userCreateEvent.getFirstName(),
-                userCreateEvent.getMiddleName(),
-                userCreateEvent.getLastName(),
-                userCreateEvent.getEmail(),
-                userCreateEvent.getPassword()));
+                userCreateArgument.getFirstName(),
+                userCreateArgument.getMiddleName(),
+                userCreateArgument.getLastName(),
+                userCreateArgument.getEmail(),
+                userCreateArgument.getPassword()));
         return new StrategyResponse("Пользователь успешно сохранен!");
     }
 
