@@ -14,7 +14,7 @@ import ru.homework.tasktracker.service.CommentService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v2/comments")
+@RequestMapping("api/v1/comments")
 public class CommentController {
     private final CommentService commentService;
 

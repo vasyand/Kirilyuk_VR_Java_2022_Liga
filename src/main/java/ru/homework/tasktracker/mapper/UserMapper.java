@@ -12,12 +12,12 @@ import static ru.homework.tasktracker.model.entity.Role.USER;
 public class UserMapper {
     public static UserFullDto userToUserFullDto(User user){
         UserFullDto userFullDto = new UserFullDto();
-        userFullDto.setId(userFullDto.getId());
-        userFullDto.setEmail(userFullDto.getEmail());
-        userFullDto.setPassword(userFullDto.getPassword());
-        userFullDto.setFirstName(userFullDto.getFirstName());
-        userFullDto.setMiddleName(userFullDto.getMiddleName());
-        userFullDto.setLastName(userFullDto.getLastName());
+        userFullDto.setId(user.getId());
+        userFullDto.setEmail(user.getEmail());
+        userFullDto.setPassword(user.getPassword());
+        userFullDto.setFirstName(user.getFirstName());
+        userFullDto.setMiddleName(user.getMiddleName());
+        userFullDto.setLastName(user.getLastName());
         userFullDto.setRole(user.getRole());
         userFullDto.setTasks(user.getTasks().stream()
                 .map(TaskMapper::taskToTaskFullDto)

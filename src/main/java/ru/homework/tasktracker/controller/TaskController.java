@@ -11,11 +11,9 @@ import ru.homework.tasktracker.model.dto.TaskPostDto;
 import ru.homework.tasktracker.model.filter.TaskFilter;
 import ru.homework.tasktracker.service.TaskService;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v2/tasks")
+@RequestMapping("api/v1/tasks")
 public class TaskController {
     private final TaskService taskService;
 

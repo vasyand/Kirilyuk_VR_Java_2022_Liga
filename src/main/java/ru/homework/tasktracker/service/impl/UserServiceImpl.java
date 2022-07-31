@@ -16,6 +16,7 @@ import ru.homework.tasktracker.repository.UserRepository;
 import ru.homework.tasktracker.service.ProjectService;
 import ru.homework.tasktracker.service.UserService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final ProjectService projectService;
 
     private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserFullDto findById(Long id) {
         User user = this.findUserById(id);
@@ -39,20 +41,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserFullDto findByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException(String.format("Пользователя с email %s не существут", email)));
         return userToUserFullDto(user);
     }
 
-    private User findUserById(Long id){
-       return userRepository.findById(id)
+    private User findUserById(Long id) {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(String.format("Пользователя с id %s не существует", id)));
     }
 
     @Override
+    @Transactional
     public Page<UserFullDto> findAll(UserFilter userFilter, Pageable pageable) {
-        Page<User> users = userRepository.findAll(generateSpecificationByUserFilter(userFilter), pageable);
+        Page<User> users;
+        if (userFilter != null) {
+            users = userRepository.findAll(generateSpecificationByUserFilter(userFilter), pageable);
+        } else {
+            users = userRepository.findAll(pageable);
+        }
         return users.map(UserMapper::userToUserFullDto);
     }
 
@@ -60,7 +69,7 @@ public class UserServiceImpl implements UserService {
     public Long save(UserCreateDto userCreateDto) {
         User user = userCreateDtoToUser(userCreateDto);
         user.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
-        return  userRepository.save(userCreateDtoToUser(userCreateDto)).getId();
+        return userRepository.save(userCreateDtoToUser(userCreateDto)).getId();
     }
 
     @Override

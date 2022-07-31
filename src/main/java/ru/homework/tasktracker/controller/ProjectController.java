@@ -13,7 +13,7 @@ import ru.homework.tasktracker.service.ProjectService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v2/projects")
+@RequestMapping("api/v1/projects")
 public class ProjectController {
     private final ProjectService projectService;
 

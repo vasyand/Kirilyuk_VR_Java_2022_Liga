@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserFullDto>> findAll(@RequestBody UserFilter userFilter, Pageable pageable) {
+    public ResponseEntity<Page<UserFullDto>> findAll(@RequestBody(required = false) UserFilter userFilter, Pageable pageable) {
         Page<UserFullDto> users = userService.findAll(userFilter, pageable);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }

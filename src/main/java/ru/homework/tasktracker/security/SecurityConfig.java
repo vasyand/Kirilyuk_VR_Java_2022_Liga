@@ -4,10 +4,13 @@ package ru.homework.tasktracker.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static ru.homework.tasktracker.model.entity.Role.ADMIN;
 import static ru.homework.tasktracker.model.entity.Role.USER;
@@ -15,13 +18,15 @@ import static ru.homework.tasktracker.model.entity.Role.USER;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -29,31 +34,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http
-
                 .authorizeRequests()
-                .antMatchers("/api/v2/registration")
-                .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v2/users/**")
-                .hasRole(USER.name())
-                .antMatchers("/api/v2/tasks/**")
-                .hasRole(USER.name())
-                .antMatchers("/api/v2/projects/**")
-                .hasRole(USER.name())
-                .antMatchers("/api/v2/comments/**")
-                .hasRole(USER.name())
-                .antMatchers("/api/**")
-                .hasRole(ADMIN.name())
+                .antMatchers("/api/v1/registration").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/api/v1/users/**",
+                        "/api/v1/projects/**").hasAnyRole(USER.name(), ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic()
+                .formLogin()
                 .and()
-                .formLogin().loginProcessingUrl("/api/v2/login")
-                .and()
-                .logout()
-                .logoutUrl("/api/v2/logout");
+                .logout().logoutUrl("/logout");
 
     }
 
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new BCryptPasswordEncoder(10).encode("admin"));
+    }
 
 }
