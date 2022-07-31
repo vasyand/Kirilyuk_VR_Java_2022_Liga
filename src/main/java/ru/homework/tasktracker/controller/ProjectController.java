@@ -1,47 +1,51 @@
 package ru.homework.tasktracker.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.homework.tasktracker.executor.StrategyExecutor;
-import ru.homework.tasktracker.model.StrategyResponse;
-
-import static ru.homework.tasktracker.model.StrategyName.*;
+import ru.homework.tasktracker.model.dto.ProjectFullDto;
+import ru.homework.tasktracker.model.dto.ProjectPostDto;
+import ru.homework.tasktracker.model.filter.ProjectFilter;
+import ru.homework.tasktracker.service.ProjectService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v2/projects")
 public class ProjectController {
-    private final StrategyExecutor strategyExecutor;
+    private final ProjectService projectService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> findById(@PathVariable String id) {
-        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_VIEW, id);
-        return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
+    public ResponseEntity<ProjectFullDto> findById(@PathVariable Long id) {
+        ProjectFullDto projectFullDto = projectService.findById(id);
+        return new ResponseEntity<>(projectFullDto, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<String> findAll(@RequestParam(required = false) String filters) {
-        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_VIEW_ALL, filters);
-        return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
+    public ResponseEntity<Page<ProjectFullDto>> findAll(@RequestBody ProjectFilter projectFilter,
+                                                        Pageable pageable) {
+        Page<ProjectFullDto> projects = projectService.findAll(projectFilter, pageable);
+        return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody String args) {
-        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_CREATE, args);
-        return new ResponseEntity<>(response.getMessage(), HttpStatus.CREATED);
+    public ResponseEntity<Long> create(@RequestBody ProjectPostDto projectPostDto) {
+        Long id = projectService.save(projectPostDto);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable String id, @RequestBody String args) {
-        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_EDIT, id + " " + args);
-        return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                         @RequestBody ProjectPostDto projectPostDto) {
+        projectService.update(projectPostDto, id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id) {
-        StrategyResponse response = strategyExecutor.executeStrategy(PROJECT_DELETE, id);
-        return new ResponseEntity<>(response.getMessage(), HttpStatus.OK);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        projectService.delete(id);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 }

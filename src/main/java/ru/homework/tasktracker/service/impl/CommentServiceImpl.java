@@ -1,7 +1,13 @@
 package ru.homework.tasktracker.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.homework.tasktracker.mapper.CommentMapper;
+import ru.homework.tasktracker.model.dto.CommentCreateDto;
+import ru.homework.tasktracker.model.dto.CommentFullDto;
+import ru.homework.tasktracker.model.dto.CommentUpdateDto;
 import ru.homework.tasktracker.model.entity.Comment;
 import ru.homework.tasktracker.model.filter.CommentFilter;
 import ru.homework.tasktracker.repository.CommentRepository;
@@ -9,6 +15,7 @@ import ru.homework.tasktracker.service.CommentService;
 
 import java.util.List;
 
+import static ru.homework.tasktracker.mapper.CommentMapper.*;
 import static ru.homework.tasktracker.specification.CommentSpecification.generateSpecificationByCommentFilter;
 
 @Service
@@ -17,30 +24,38 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
     @Override
-    public Comment findById(Long id) {
-        return commentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Комментария с id %s не существует", id)));
+    public CommentFullDto findById(Long id) {
+        Comment comment = this.findCommentById(id);
+        return commentToCommentFullDto(comment);
     }
 
     @Override
-    public List<Comment> findAll(CommentFilter commentFilter) {
-        return commentRepository.findAll(generateSpecificationByCommentFilter(commentFilter));
+    public Page<CommentFullDto> findAll(CommentFilter commentFilter, Pageable pageable) {
+        Page<Comment> comments = commentRepository.findAll(generateSpecificationByCommentFilter(commentFilter), pageable);
+        return comments.map(CommentMapper::commentToCommentFullDto);
     }
 
     @Override
-    public void save(Comment comment) {
-        commentRepository.save(comment);
+    public Long save(CommentCreateDto commentCreateDto) {
+        Comment comment = commentCreateDtoToComment(commentCreateDto);
+        return commentRepository.save(comment).getId();
     }
 
     @Override
     public void delete(Long id) {
-        Comment comment = this.findById(id);
+        Comment comment = this.findCommentById(id);
         commentRepository.save(comment);
     }
 
     @Override
-    public void update(Comment comment) {
-        this.findById(comment.getId());
+    public void update(CommentUpdateDto commentUpdateDto, Long id) {
+        Comment comment = this.findCommentById(id);
+        commentUpdateDtoMergeWithComment(commentUpdateDto, comment);
         commentRepository.save(comment);
+    }
+
+    private Comment findCommentById(Long id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(String.format("Комментария с id %s не существует", id)));
     }
 }

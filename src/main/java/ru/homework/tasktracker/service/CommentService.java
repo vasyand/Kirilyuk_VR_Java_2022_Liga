@@ -1,17 +1,19 @@
 package ru.homework.tasktracker.service;
 
-import ru.homework.tasktracker.model.entity.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.homework.tasktracker.model.dto.CommentCreateDto;
+import ru.homework.tasktracker.model.dto.CommentFullDto;
+import ru.homework.tasktracker.model.dto.CommentUpdateDto;
 import ru.homework.tasktracker.model.filter.CommentFilter;
 
-import java.util.List;
-
 public interface CommentService {
-    Comment findById(Long id);
+    CommentFullDto findById(Long id);
 
-    List<Comment> findAll(CommentFilter commentFilter);
-    void save(Comment comment);
+    Page<CommentFullDto> findAll(CommentFilter commentFilter, Pageable pageable);
+    Long save(CommentCreateDto commentCreateDto);
 
     void delete(Long id);
 
-    void update(Comment comment);
+    void update(CommentUpdateDto comment, Long id);
 }

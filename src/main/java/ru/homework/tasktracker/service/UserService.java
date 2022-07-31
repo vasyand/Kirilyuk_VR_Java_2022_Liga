@@ -1,20 +1,29 @@
 package ru.homework.tasktracker.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.homework.tasktracker.model.dto.UserCreateDto;
+import ru.homework.tasktracker.model.dto.UserFullDto;
+import ru.homework.tasktracker.model.dto.UserUpdateDto;
 import ru.homework.tasktracker.model.entity.User;
 import ru.homework.tasktracker.model.filter.UserFilter;
 
 import java.util.List;
 
 public interface UserService {
-    User findById(Long id);
+    UserFullDto findById(Long id);
 
-    List<User> findAll(UserFilter userFilter);
+    UserFullDto findByEmail(String email);
 
-    void save(User user);
+    Page<UserFullDto> findAll(UserFilter userFilter, Pageable pageable);
+
+    void addProject(Long userId, Long projectId);
+
+    Long save(UserCreateDto user);
 
     void delete(Long id);
 
-    void update(User user);
+    void update(UserUpdateDto user, Long id);
 
-    User findUserWithMaxNumberTasks(UserFilter userFilter);
+    UserFullDto findUserWithMaxNumberTasks(UserFilter userFilter);
 }

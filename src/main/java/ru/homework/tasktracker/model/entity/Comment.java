@@ -1,13 +1,11 @@
 package ru.homework.tasktracker.model.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
 @Table(name = "comments")
@@ -20,9 +18,4 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "task_id")
     private Task task;
-
-    public Comment(String message, Task task) {
-        this.message = message;
-        this.task = task;
-    }
 }

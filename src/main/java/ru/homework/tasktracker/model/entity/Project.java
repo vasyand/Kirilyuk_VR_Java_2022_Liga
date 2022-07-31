@@ -1,19 +1,16 @@
 package ru.homework.tasktracker.model.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @Table(name = "projects")
 public class Project {
     @Id
@@ -29,14 +26,4 @@ public class Project {
 
     @ManyToMany(mappedBy = "projects")
     private List<User> users;
-
-    public Project(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
-    @Override
-    public String toString() {
-        return "Заголовок: " + title + "\n" + "Описание: " + description + "\n";
-    }
 }

@@ -1,17 +1,18 @@
 package ru.homework.tasktracker.service;
 
-import ru.homework.tasktracker.model.entity.Project;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.homework.tasktracker.model.dto.ProjectFullDto;
+import ru.homework.tasktracker.model.dto.ProjectPostDto;
 import ru.homework.tasktracker.model.filter.ProjectFilter;
 
-import java.util.List;
-
 public interface ProjectService {
-    Project findById(Long id);
-    List<Project> findAll(ProjectFilter projectFilter);
+    ProjectFullDto findById(Long id);
+    Page<ProjectFullDto> findAll(ProjectFilter projectFilter, Pageable pageable);
 
-    void save(Project project);
+    Long save(ProjectPostDto project);
 
     void delete(Long id);
 
-    void update(Project project);
+    void update(ProjectPostDto project, Long id);
 }

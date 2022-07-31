@@ -35,7 +35,7 @@ public class UserSpecification {
 
     private static Specification<User> filterByTask(UserFilter userFilter) {
         return (root, query, criteriaBuilder) -> {
-            Join<User, Task> tasks = root.join(User_.tasks, JoinType.LEFT);
+            Join<User, Task> tasks = root.join(User_.tasks, JoinType.INNER);
             return criteriaBuilder.and(
                     filterByTaskStatus(userFilter.getTaskStatus(), tasks, criteriaBuilder),
                     filterByTaskDates(userFilter.getFrom(), userFilter.getTo(), tasks, criteriaBuilder)
@@ -46,7 +46,6 @@ public class UserSpecification {
     private static Predicate filterByTaskStatus(TaskStatus status, Join<User, Task> join, CriteriaBuilder criteriaBuilder) {
         if (status == null) return criteriaBuilder.and();
         return criteriaBuilder.equal(join.get(Task_.TASK_STATUS), status);
-
     }
 
     private static Predicate filterByTaskDates(LocalDate from, LocalDate to, Join<User, Task> join, CriteriaBuilder criteriaBuilder) {

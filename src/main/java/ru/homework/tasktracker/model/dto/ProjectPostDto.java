@@ -1,10 +1,9 @@
-package ru.homework.tasktracker.model.filter;
-
+package ru.homework.tasktracker.model.dto;
 
 import lombok.Getter;
 
 @Getter
-public class ProjectFilter {
+public class ProjectPostDto {
     private String title;
     private String description;
 }
