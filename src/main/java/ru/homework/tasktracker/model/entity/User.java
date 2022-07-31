@@ -17,21 +17,22 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String email;
+    private String password;
 
-    @OneToMany(mappedBy = "user",
-            cascade = CascadeType.ALL)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "user")
     @Fetch(FetchMode.JOIN)
     private List<Task> tasks;
 
-    public User(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "   " + name + " с id - " + id;
-    }
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "users_projects")
+    private List<Project> projects;
 }

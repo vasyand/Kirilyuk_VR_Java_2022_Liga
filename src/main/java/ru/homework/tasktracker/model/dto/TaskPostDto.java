@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.model.filter;
+package ru.homework.tasktracker.model.dto;
 
 import lombok.Getter;
 import ru.homework.tasktracker.model.entity.TaskStatus;
@@ -6,12 +6,11 @@ import ru.homework.tasktracker.model.entity.TaskStatus;
 import java.time.LocalDate;
 
 @Getter
-public class TaskFilter {
+public class TaskPostDto {
     private String title;
     private String description;
-    private String userId;
-    private String projectId;
+    private Long userId;
+    private Long projectId;
+    private LocalDate date;
     private TaskStatus taskStatus;
-    private LocalDate to;
-    private LocalDate from;
 }

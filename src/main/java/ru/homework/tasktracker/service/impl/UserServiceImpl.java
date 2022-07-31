@@ -1,70 +1,100 @@
 package ru.homework.tasktracker.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.homework.tasktracker.mapper.UserMapper;
+import ru.homework.tasktracker.model.dto.UserCreateDto;
+import ru.homework.tasktracker.model.dto.UserFullDto;
+import ru.homework.tasktracker.model.dto.UserUpdateDto;
+import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.entity.User;
 import ru.homework.tasktracker.model.filter.UserFilter;
 import ru.homework.tasktracker.repository.UserRepository;
+import ru.homework.tasktracker.service.ProjectService;
 import ru.homework.tasktracker.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import static java.util.Comparator.comparingInt;
-import static org.springframework.data.jpa.domain.Specification.where;
+import static java.util.Comparator.comparingLong;
+import static java.util.stream.Collectors.groupingBy;
+import static ru.homework.tasktracker.mapper.UserMapper.*;
 import static ru.homework.tasktracker.specification.UserSpecification.generateSpecificationByUserFilter;
-import static ru.homework.tasktracker.specification.UserSpecification.getUserById;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final ProjectService projectService;
+
+    private final PasswordEncoder passwordEncoder;
+    @Override
+    public UserFullDto findById(Long id) {
+        User user = this.findUserById(id);
+        return userToUserFullDto(user);
+    }
 
     @Override
-    public User findById(Long id) {
-        return userRepository.findById(id)
+    public UserFullDto findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException(String.format("Пользователя с email %s не существут", email)));
+        return userToUserFullDto(user);
+    }
+
+    private User findUserById(Long id){
+       return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(String.format("Пользователя с id %s не существует", id)));
     }
 
     @Override
-    public User findById(Long id, UserFilter userFilter) {
-        User user =  userRepository.findOne(where(getUserById(id))
-                .and(generateSpecificationByUserFilter(userFilter)))
-                .orElse(null);
-        if (user == null) {
-            user = findById(id);
-            user.setTasks(new ArrayList<>());
-        }
-        return user;
+    public Page<UserFullDto> findAll(UserFilter userFilter, Pageable pageable) {
+        Page<User> users = userRepository.findAll(generateSpecificationByUserFilter(userFilter), pageable);
+        return users.map(UserMapper::userToUserFullDto);
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Long save(UserCreateDto userCreateDto) {
+        User user = userCreateDtoToUser(userCreateDto);
+        user.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
+        return  userRepository.save(userCreateDtoToUser(userCreateDto)).getId();
     }
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
-    @Override
-    public void update(User user) {
+    public void update(UserUpdateDto userUpdateDto, Long id) {
+        User user = this.findUserById(id);
+        userUpdateDtoMergeWithUser(userUpdateDto, user);
         userRepository.save(user);
     }
 
     @Override
     public void delete(Long id) {
-        User user = findById(id);
+        User user = this.findUserById(id);
         userRepository.delete(user);
     }
 
     @Override
-    public User findUserWithMaxNumberTasks(UserFilter userFilter) {
+    public UserFullDto findUserWithMaxNumberTasks(UserFilter userFilter) {
         List<User> users = userRepository.findAll(generateSpecificationByUserFilter(userFilter));
-        return users.stream()
-                .max(comparingInt(u -> u.getTasks().size()))
-                .orElseThrow(() -> new RuntimeException("С такими значениями фильтров никого не нашлось"));
+        Map<UserFullDto, Long> countUser = users.stream()
+                .map(UserMapper::userToUserFullDto)
+                .collect(groupingBy(u -> u, Collectors.counting()));
+        return countUser.entrySet().stream()
+                .max(comparingLong(Map.Entry::getValue))
+                .get()
+                .getKey();
     }
 
+    @Override
+    public void addProject(Long userId, Long projectId) {
+        User user = findUserById(userId);
+        Project project = new Project();
+        project.setId(projectId);
+        user.getProjects().add(project);
+        project.getUsers().add(user);
+        userRepository.save(user);
+    }
 }

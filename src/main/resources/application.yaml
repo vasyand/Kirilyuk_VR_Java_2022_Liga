@@ -1,10 +1,7 @@
-server:
-  port: 8081
-
 spring:
   datasource:
-    username: postgres
-    password: postgres
+    username: test
+    password: test
     url: jdbc:postgresql://localhost:5432/test
     driver-class-name: org.postgresql.Driver
 
@@ -14,4 +11,6 @@ spring:
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
+  flyway:
+    schemas: public1
 
