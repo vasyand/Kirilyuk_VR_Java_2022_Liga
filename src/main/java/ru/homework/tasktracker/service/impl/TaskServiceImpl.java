@@ -16,6 +16,7 @@ import ru.homework.tasktracker.service.UserService;
 
 import static ru.homework.tasktracker.mapper.TaskMapper.*;
 import static ru.homework.tasktracker.specification.TaskSpecification.generateSpecificationByTaskFilter;
+import static ru.homework.tasktracker.specification.UserSpecification.generateSpecificationByUserFilter;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Page<TaskFullDto> findAll(TaskFilter taskFilter, Pageable pageable) {
-        Page<Task> tasks =  taskRepository.findAll(generateSpecificationByTaskFilter(taskFilter), pageable);
+        Page<Task> tasks;
+        if (taskFilter != null) {
+            tasks = taskRepository.findAll(generateSpecificationByTaskFilter(taskFilter), pageable);
+        } else {
+            tasks = taskRepository.findAll(pageable);
+        }
         return tasks.map(TaskMapper::taskToTaskFullDto);
     }
 

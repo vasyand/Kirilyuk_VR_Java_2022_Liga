@@ -14,6 +14,7 @@ import ru.homework.tasktracker.service.ProjectService;
 
 import static ru.homework.tasktracker.mapper.ProjectMapper.*;
 import static ru.homework.tasktracker.specification.ProjectSpecification.generateSpecificationByProjectFilter;
+import static ru.homework.tasktracker.specification.TaskSpecification.generateSpecificationByTaskFilter;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<ProjectFullDto> findAll(ProjectFilter projectFilter, Pageable pageable) {
-        Page<Project> projects = projectRepository.findAll(generateSpecificationByProjectFilter(projectFilter), pageable);
+        Page<Project> projects;
+        if (projectFilter != null) {
+            projects = projectRepository.findAll(generateSpecificationByProjectFilter(projectFilter), pageable);
+        } else {
+            projects = projectRepository.findAll(pageable);
+        }
         return projects.map(ProjectMapper::projectToProjectFullDto);
     }
 

@@ -24,7 +24,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProjectFullDto>> findAll(@RequestBody ProjectFilter projectFilter,
+    public ResponseEntity<Page<ProjectFullDto>> findAll(@RequestBody(required = false) ProjectFilter projectFilter,
                                                         Pageable pageable) {
         Page<ProjectFullDto> projects = projectService.findAll(projectFilter, pageable);
         return new ResponseEntity<>(projects, HttpStatus.OK);

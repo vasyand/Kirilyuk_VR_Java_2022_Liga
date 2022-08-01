@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.homework.tasktracker.model.dto.TaskFullDto;
 import ru.homework.tasktracker.model.dto.TaskPostDto;
@@ -24,7 +25,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TaskFullDto>> findAll(@RequestBody TaskFilter taskFilter, Pageable pageable) {
+    public ResponseEntity<Page<TaskFullDto>> findAll(@RequestBody(required = false) TaskFilter taskFilter,
+                                                     Pageable pageable) {
         Page<TaskFullDto> tasks = taskService.findAll(taskFilter, pageable);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
@@ -35,12 +37,14 @@ public class TaskController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody TaskPostDto taskPostDto, @PathVariable Long id) {
         taskService.update(taskPostDto, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         taskService.delete(id);

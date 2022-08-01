@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.homework.tasktracker.model.dto.CommentCreateDto;
 import ru.homework.tasktracker.model.dto.CommentFullDto;
@@ -25,7 +26,7 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CommentFullDto>> findAll(@RequestBody CommentFilter commentFilter,
+    public ResponseEntity<Page<CommentFullDto>> findAll(@RequestBody(required = false) CommentFilter commentFilter,
                                                         Pageable pageable) {
         Page<CommentFullDto> comments = commentService.findAll(commentFilter, pageable);
         return new ResponseEntity<>(comments, HttpStatus.OK);
@@ -37,6 +38,7 @@ public class CommentController {
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,
                                          @RequestBody CommentUpdateDto commentUpdateDto) {
@@ -44,6 +46,7 @@ public class CommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         commentService.delete(id);

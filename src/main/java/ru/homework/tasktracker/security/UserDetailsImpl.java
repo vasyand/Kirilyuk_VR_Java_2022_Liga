@@ -13,10 +13,15 @@ public class UserDetailsImpl implements UserDetails {
         this.userFullDto = userFullDto;
     }
 
+    public UserFullDto getUser() {
+        return userFullDto;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userFullDto.getRole().getPermissions();
     }
+
 
     @Override
     public String getPassword() {

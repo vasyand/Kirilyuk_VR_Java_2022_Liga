@@ -9,6 +9,7 @@ import ru.homework.tasktracker.model.dto.CommentCreateDto;
 import ru.homework.tasktracker.model.dto.CommentFullDto;
 import ru.homework.tasktracker.model.dto.CommentUpdateDto;
 import ru.homework.tasktracker.model.entity.Comment;
+import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.filter.CommentFilter;
 import ru.homework.tasktracker.repository.CommentRepository;
 import ru.homework.tasktracker.service.CommentService;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static ru.homework.tasktracker.mapper.CommentMapper.*;
 import static ru.homework.tasktracker.specification.CommentSpecification.generateSpecificationByCommentFilter;
+import static ru.homework.tasktracker.specification.ProjectSpecification.generateSpecificationByProjectFilter;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Page<CommentFullDto> findAll(CommentFilter commentFilter, Pageable pageable) {
-        Page<Comment> comments = commentRepository.findAll(generateSpecificationByCommentFilter(commentFilter), pageable);
+        Page<Comment> comments;
+        if (commentFilter != null) {
+            comments = commentRepository.findAll(generateSpecificationByCommentFilter(commentFilter), pageable);
+        } else {
+            comments = commentRepository.findAll(pageable);
+        }
         return comments.map(CommentMapper::commentToCommentFullDto);
     }
 

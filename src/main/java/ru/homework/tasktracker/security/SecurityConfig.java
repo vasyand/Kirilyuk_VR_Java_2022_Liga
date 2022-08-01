@@ -38,26 +38,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/registration").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/v1/users/**",
-                        "/api/v1/projects/**").hasAnyRole(USER.name(), ADMIN.name())
+                .antMatchers(HttpMethod.GET,
+                        "/api/v1/users/**",
+                        "/api/v1/projects/**",
+                        "/api/v1/comments/**")
+                .hasAnyRole(USER.name(), ADMIN.name())
+                .antMatchers("/api/v1/tasks/**")
+                .hasAnyRole(USER.name(), ADMIN.name())
                 .anyRequest()
-                .authenticated()
+                .hasRole(ADMIN.name())
                 .and()
-                .formLogin()
+                .formLogin().loginProcessingUrl("/api/v1/auth/login")
+                .successForwardUrl("/api/v1/auth/login/success")
                 .and()
-                .logout().logoutUrl("/logout");
+                .logout().logoutUrl("/api/v1/auth/logout")
+                .logoutSuccessUrl("/api/v1/auth/logout/success").permitAll();
 
     }
-
 
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new BCryptPasswordEncoder(10).encode("admin"));
     }
 
 }
