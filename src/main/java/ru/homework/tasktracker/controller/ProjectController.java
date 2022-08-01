@@ -7,9 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.homework.tasktracker.model.dto.ProjectFullDto;
-import ru.homework.tasktracker.model.dto.ProjectPostDto;
+import ru.homework.tasktracker.model.dto.ProjectCreateDto;
+import ru.homework.tasktracker.model.dto.ProjectUpdateDto;
 import ru.homework.tasktracker.model.filter.ProjectFilter;
 import ru.homework.tasktracker.service.ProjectService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,15 +34,15 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody ProjectPostDto projectPostDto) {
-        Long id = projectService.save(projectPostDto);
+    public ResponseEntity<Long> create(@RequestBody @Valid ProjectCreateDto projectCreateDto) {
+        Long id = projectService.save(projectCreateDto);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                         @RequestBody ProjectPostDto projectPostDto) {
-        projectService.update(projectPostDto, id);
+                                    @RequestBody ProjectUpdateDto projectUpdateDto) {
+        projectService.update(projectUpdateDto, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

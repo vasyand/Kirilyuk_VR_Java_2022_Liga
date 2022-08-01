@@ -8,9 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.homework.tasktracker.model.dto.TaskFullDto;
-import ru.homework.tasktracker.model.dto.TaskPostDto;
+import ru.homework.tasktracker.model.dto.TaskCreateDto;
+import ru.homework.tasktracker.model.dto.TaskUpdateDto;
 import ru.homework.tasktracker.model.filter.TaskFilter;
 import ru.homework.tasktracker.service.TaskService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,15 +35,16 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody TaskPostDto taskPostDto) {
-        Long id = taskService.save(taskPostDto);
+    public ResponseEntity<Long> create(@RequestBody @Valid TaskCreateDto taskCreateDto) {
+        Long id = taskService.save(taskCreateDto);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody TaskPostDto taskPostDto, @PathVariable Long id) {
-        taskService.update(taskPostDto, id);
+    public ResponseEntity<?> update(@RequestBody TaskUpdateDto taskUpdateDto,
+                                    @PathVariable Long id) {
+        taskService.update(taskUpdateDto, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

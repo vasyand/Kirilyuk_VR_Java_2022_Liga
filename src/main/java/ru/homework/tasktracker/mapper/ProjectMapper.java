@@ -1,7 +1,8 @@
 package ru.homework.tasktracker.mapper;
 
 import ru.homework.tasktracker.model.dto.ProjectFullDto;
-import ru.homework.tasktracker.model.dto.ProjectPostDto;
+import ru.homework.tasktracker.model.dto.ProjectCreateDto;
+import ru.homework.tasktracker.model.dto.ProjectUpdateDto;
 import ru.homework.tasktracker.model.entity.Project;
 
 import java.util.stream.Collectors;
@@ -15,25 +16,22 @@ public class ProjectMapper {
         projectFullDto.setTasks(project.getTasks().stream()
                 .map(TaskMapper::taskToTaskFullDto)
                 .collect(Collectors.toList()));
-        projectFullDto.setUsers(project.getUsers().stream()
-                .map(UserMapper::userToUserFullDto)
-                .collect(Collectors.toList()));
         return projectFullDto;
     }
 
-    public static Project projectPostDtoToProject(ProjectPostDto projectPostDto) {
+    public static Project projectPostDtoToProject(ProjectCreateDto projectCreateDto) {
         Project project = new Project();
-        project.setTitle(projectPostDto.getTitle());
-        project.setDescription(projectPostDto.getTitle());
+        project.setTitle(projectCreateDto.getTitle());
+        project.setDescription(projectCreateDto.getTitle());
         return project;
     }
 
-    public static void projectPostDtoMergeWithProject(ProjectPostDto projectPostDto, Project project) {
-        if (projectPostDto.getDescription() != null ) {
-            project.setDescription(projectPostDto.getDescription());
+    public static void projectPostDtoMergeWithProject(ProjectUpdateDto projectUpdateDto, Project project) {
+        if (projectUpdateDto.getDescription() != null ) {
+            project.setDescription(projectUpdateDto.getDescription());
         }
-        if (projectPostDto.getTitle() != null) {
-            project.setTitle(projectPostDto.getTitle());
+        if (projectUpdateDto.getTitle() != null) {
+            project.setTitle(projectUpdateDto.getTitle());
         }
     }
 }

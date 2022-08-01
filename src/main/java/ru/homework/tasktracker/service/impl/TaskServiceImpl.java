@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.homework.tasktracker.exception.EntityNotFoundException;
 import ru.homework.tasktracker.mapper.TaskMapper;
 import ru.homework.tasktracker.model.dto.TaskFullDto;
-import ru.homework.tasktracker.model.dto.TaskPostDto;
+import ru.homework.tasktracker.model.dto.TaskCreateDto;
+import ru.homework.tasktracker.model.dto.TaskUpdateDto;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.filter.TaskFilter;
 import ru.homework.tasktracker.repository.TaskRepository;
@@ -14,9 +16,11 @@ import ru.homework.tasktracker.service.ProjectService;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.service.UserService;
 
+import javax.transaction.Transactional;
+
+import static java.lang.String.*;
 import static ru.homework.tasktracker.mapper.TaskMapper.*;
 import static ru.homework.tasktracker.specification.TaskSpecification.generateSpecificationByTaskFilter;
-import static ru.homework.tasktracker.specification.UserSpecification.generateSpecificationByUserFilter;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +30,14 @@ public class TaskServiceImpl implements TaskService {
     private final ProjectService projectService;
 
     @Override
+    @Transactional
     public TaskFullDto findById(Long id) {
         Task task = findTaskById(id);
         return taskToTaskFullDto(task);
     }
 
     @Override
+    @Transactional
     public Page<TaskFullDto> findAll(TaskFilter taskFilter, Pageable pageable) {
         Page<Task> tasks;
         if (taskFilter != null) {
@@ -43,23 +49,26 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         Task task = this.findTaskById(id);
         taskRepository.delete(task);
     }
 
     @Override
-    public Long save(TaskPostDto taskPostDto) {
-        userService.findById(taskPostDto.getUserId());
-        projectService.findById(taskPostDto.getProjectId());
-        Task task = taskPostDtoToTask(taskPostDto);
+    @Transactional
+    public Long save(TaskCreateDto taskCreateDto) {
+        userService.findById(taskCreateDto.getUserId());
+        projectService.findById(taskCreateDto.getProjectId());
+        Task task = taskPostDtoToTask(taskCreateDto);
         return taskRepository.save(task).getId();
     }
 
     @Override
-    public void update(TaskPostDto taskPostDto, Long id) {
+    @Transactional
+    public void update(TaskUpdateDto taskUpdateDto, Long id) {
         Task task = this.findTaskById(id);
-        taskPostDtoMergeWithTask(taskPostDto, task);
+        taskPostDtoMergeWithTask(taskUpdateDto, task);
         userService.findById(task.getUser().getId());
         projectService.findById(task.getProject().getId());
         taskRepository.save(task);
@@ -67,6 +76,6 @@ public class TaskServiceImpl implements TaskService {
 
     private Task findTaskById(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Задачи с id %s не существует", id)));
+                .orElseThrow(() -> new EntityNotFoundException(format("Задачи с id %s не существует", id)));
     }
 }

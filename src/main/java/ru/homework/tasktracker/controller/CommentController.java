@@ -13,6 +13,8 @@ import ru.homework.tasktracker.model.dto.CommentUpdateDto;
 import ru.homework.tasktracker.model.filter.CommentFilter;
 import ru.homework.tasktracker.service.CommentService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/comments")
@@ -33,7 +35,7 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody CommentCreateDto commentCreateDto) {
+    public ResponseEntity<Long> create(@RequestBody @Valid CommentCreateDto commentCreateDto) {
         Long id = commentService.save(commentCreateDto);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
@@ -41,7 +43,7 @@ public class CommentController {
     @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,
-                                         @RequestBody CommentUpdateDto commentUpdateDto) {
+                                    @RequestBody CommentUpdateDto commentUpdateDto) {
         commentService.update(commentUpdateDto, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

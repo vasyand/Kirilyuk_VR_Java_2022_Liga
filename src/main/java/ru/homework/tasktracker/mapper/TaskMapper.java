@@ -1,12 +1,16 @@
 package ru.homework.tasktracker.mapper;
 
 import ru.homework.tasktracker.model.dto.TaskFullDto;
-import ru.homework.tasktracker.model.dto.TaskPostDto;
+import ru.homework.tasktracker.model.dto.TaskCreateDto;
+import ru.homework.tasktracker.model.dto.TaskUpdateDto;
 import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.entity.Task;
+import ru.homework.tasktracker.model.entity.TaskStatus;
 import ru.homework.tasktracker.model.entity.User;
 
 import java.util.stream.Collectors;
+
+import static ru.homework.tasktracker.model.entity.TaskStatus.*;
 
 public class TaskMapper {
     public static TaskFullDto taskToTaskFullDto(Task task) {
@@ -24,38 +28,39 @@ public class TaskMapper {
         return taskFullDto;
     }
 
-    public static Task taskPostDtoToTask(TaskPostDto taskPostDto) {
+    public static Task taskPostDtoToTask(TaskCreateDto taskCreateDto) {
         Task task = new Task();
-        task.setTitle(taskPostDto.getTitle());
-        task.setDescription(taskPostDto.getDescription());
-        task.setDate(taskPostDto.getDate());
+        task.setTitle(taskCreateDto.getTitle());
+        task.setDescription(taskCreateDto.getDescription());
+        task.setDate(taskCreateDto.getDate());
+        task.setTaskStatus(CREATED);
         User user = new User();
-        user.setId(taskPostDto.getUserId());
+        user.setId(taskCreateDto.getUserId());
         task.setUser(user);
         Project project = new Project();
-        project.setId(taskPostDto.getProjectId());
+        project.setId(taskCreateDto.getProjectId());
         task.setProject(project);
         return task;
     }
 
-    public static void taskPostDtoMergeWithTask(TaskPostDto taskPostDto, Task task) {
-        if (taskPostDto.getTitle() != null) {
-            task.setTitle(taskPostDto.getTitle());
+    public static void taskPostDtoMergeWithTask(TaskUpdateDto taskUpdateDto, Task task) {
+        if (taskUpdateDto.getTitle() != null) {
+            task.setTitle(taskUpdateDto.getTitle());
         }
-        if (taskPostDto.getDescription() != null) {
-            task.setDescription(taskPostDto.getDescription());
+        if (taskUpdateDto.getDescription() != null) {
+            task.setDescription(taskUpdateDto.getDescription());
         }
-        if (taskPostDto.getDate() != null) {
-            task.setDate(taskPostDto.getDate());
+        if (taskUpdateDto.getDate() != null) {
+            task.setDate(taskUpdateDto.getDate());
         }
-        if (taskPostDto.getUserId() != null) {
+        if (taskUpdateDto.getUserId() != null) {
             User user = new User();
-            user.setId(taskPostDto.getUserId());
+            user.setId(taskUpdateDto.getUserId());
             task.setUser(user);
         }
-        if (taskPostDto.getProjectId() != null) {
+        if (taskUpdateDto.getProjectId() != null) {
             Project project = new Project();
-            project.setId(taskPostDto.getProjectId());
+            project.setId(taskUpdateDto.getProjectId());
             task.setProject(project);
         }
     }
