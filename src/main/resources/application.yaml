@@ -2,7 +2,7 @@ spring:
   datasource:
     username: test
     password: test
-    url: jdbc:postgresql://localhost:5432/test
+    url: jdbc:postgresql://host.docker.internal:5432/test
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -14,4 +14,7 @@ spring:
 
   flyway:
     schemas: public
+    url: jdbc:postgresql://host.docker.internal:5432/test
+    password: test
+    user: test
 
