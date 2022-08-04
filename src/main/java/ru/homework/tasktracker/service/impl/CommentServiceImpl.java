@@ -46,14 +46,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void delete(Long id) {
-        Comment comment = this.findCommentById(id);
-        commentRepository.save(comment);
+        Comment comment = findCommentById(id);
+        commentRepository.delete(comment);
     }
 
     @Override
     @Transactional
     public CommentFullDto update(CommentUpdateDto commentUpdateDto, Long id) {
-        Comment comment = this.findCommentById(id);
+        Comment comment = findCommentById(id);
         commentMapper.commentUpdateDtoMergeWithComment(commentUpdateDto, comment);
         return commentMapper.commentToCommentFullDto(commentRepository.save(comment));
     }

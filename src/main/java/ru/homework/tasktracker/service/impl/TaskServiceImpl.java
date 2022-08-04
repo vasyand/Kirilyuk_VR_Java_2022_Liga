@@ -45,7 +45,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public void delete(Long id) {
-        Task task = this.findTaskById(id);
+        Task task = findTaskById(id);
         taskRepository.delete(task);
     }
 

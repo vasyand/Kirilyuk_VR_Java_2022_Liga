@@ -55,7 +55,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UserFullDto save(UserCreateDto userCreateDto) {
         User user = userMapper.userCreateDtoToUser(userCreateDto);
         user.setRole(USER);
@@ -66,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserFullDto update(UserUpdateDto userUpdateDto, Long id) {
-        User user = this.findUserById(id);
+        User user = findUserById(id);
         userMapper.userUpdateDtoMergeWithUser(userUpdateDto, user);
         return userMapper.userToUserFullDto(userRepository.save(user));
     }
@@ -74,12 +73,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(Long id) {
-        User user = this.findUserById(id);
+        User user = findUserById(id);
         userRepository.delete(user);
     }
 
     @Override
-    @Transactional
     public UserFullDto findUserWithMaxNumberTasks(UserFilter userFilter) {
         List<User> users = userRepository.findAll(generateSpecificationByUserFilter(userFilter));
         Map<UserFullDto, Long> countUser = users.stream()

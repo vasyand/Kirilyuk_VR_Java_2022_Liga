@@ -46,14 +46,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void delete(Long id) {
-        Project project = this.findProjectById(id);
+        Project project = findProjectById(id);
         projectRepository.delete(project);
     }
 
     @Override
     @Transactional
     public ProjectFullDto update(ProjectUpdateDto projectUpdateDto, Long id) {
-        Project project = this.findProjectById(id);
+        Project project = findProjectById(id);
         projectMapper.projectUpdateDtoMergeWithProject(projectUpdateDto, project);
         return projectMapper.projectToProjectFullDto(projectRepository.save(project));
     }
