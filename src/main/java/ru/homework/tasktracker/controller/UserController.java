@@ -6,11 +6,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.homework.tasktracker.model.dto.ProjectAddDto;
 import ru.homework.tasktracker.model.dto.UserCreateDto;
 import ru.homework.tasktracker.model.dto.UserFullDto;
 import ru.homework.tasktracker.model.dto.UserUpdateDto;
 import ru.homework.tasktracker.model.filter.UserFilter;
 import ru.homework.tasktracker.service.UserService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,27 +28,27 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserFullDto>> findAll(@RequestBody UserFilter userFilter, Pageable pageable) {
+    public ResponseEntity<Page<UserFullDto>> findAll(@RequestBody(required = false) UserFilter userFilter, Pageable pageable) {
         Page<UserFullDto> users = userService.findAll(userFilter, pageable);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody UserCreateDto userCreateDto) {
-        Long id = userService.save(userCreateDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<UserFullDto> create(@RequestBody @Valid UserCreateDto userCreateDto) {
+        UserFullDto userFullDto = userService.save(userCreateDto);
+        return new ResponseEntity<>(userFullDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/projects")
-    public ResponseEntity<?> addProject(@PathVariable Long id, @RequestBody Long projectId) {
-        userService.addProject(id, projectId);
+    public ResponseEntity<?> addProject(@PathVariable Long id, @RequestBody ProjectAddDto project) {
+        userService.addProject(id, project.getProjectId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id) {
-        userService.update(userUpdateDto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserFullDto> update(@RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id) {
+        UserFullDto userFullDto = userService.update(userUpdateDto, id);
+        return new ResponseEntity<>(userFullDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

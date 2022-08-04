@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.homework.tasktracker.model.dto.CommentCreateDto;
 import ru.homework.tasktracker.model.dto.CommentFullDto;
@@ -12,9 +13,11 @@ import ru.homework.tasktracker.model.dto.CommentUpdateDto;
 import ru.homework.tasktracker.model.filter.CommentFilter;
 import ru.homework.tasktracker.service.CommentService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v2/comments")
+@RequestMapping("api/v1/comments")
 public class CommentController {
     private final CommentService commentService;
 
@@ -25,25 +28,27 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CommentFullDto>> findAll(@RequestBody CommentFilter commentFilter,
+    public ResponseEntity<Page<CommentFullDto>> findAll(@RequestBody(required = false) CommentFilter commentFilter,
                                                         Pageable pageable) {
         Page<CommentFullDto> comments = commentService.findAll(commentFilter, pageable);
         return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody CommentCreateDto commentCreateDto) {
-        Long id = commentService.save(commentCreateDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<CommentFullDto> create(@RequestBody @Valid CommentCreateDto commentCreateDto) {
+        CommentFullDto commentFullDto = commentService.save(commentCreateDto);
+        return new ResponseEntity<>(commentFullDto, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,
-                                         @RequestBody CommentUpdateDto commentUpdateDto) {
-        commentService.update(commentUpdateDto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<CommentFullDto> update(@PathVariable Long id,
+                                                 @RequestBody CommentUpdateDto commentUpdateDto) {
+        CommentFullDto commentFullDto = commentService.update(commentUpdateDto, id);
+        return new ResponseEntity<>(commentFullDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         commentService.delete(id);

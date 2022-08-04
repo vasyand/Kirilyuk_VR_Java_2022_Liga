@@ -2,6 +2,7 @@ package ru.homework.tasktracker.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import ru.homework.tasktracker.model.dto.TaskFullDto;
 import ru.homework.tasktracker.model.dto.UserCreateDto;
 import ru.homework.tasktracker.model.dto.UserFullDto;
 import ru.homework.tasktracker.model.dto.UserUpdateDto;
@@ -19,11 +20,11 @@ public interface UserService {
 
     void addProject(Long userId, Long projectId);
 
-    Long save(UserCreateDto user);
+    UserFullDto save(UserCreateDto user);
 
     void delete(Long id);
 
-    void update(UserUpdateDto user, Long id);
+    UserFullDto update(UserUpdateDto user, Long id);
 
     UserFullDto findUserWithMaxNumberTasks(UserFilter userFilter);
 }

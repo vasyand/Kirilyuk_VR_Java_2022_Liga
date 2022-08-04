@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.model.entity;
+package ru.homework.tasktracker.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,8 +17,10 @@ public enum Role {
     }
 
     public Set<GrantedAuthority> getPermissions() {
-        return permissions.stream()
+        Set<GrantedAuthority> grantedAuthorities =  permissions.stream()
                 .map(p -> new SimpleGrantedAuthority(p.getPermission()))
                 .collect(Collectors.toSet());
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+        return grantedAuthorities;
     }
 }

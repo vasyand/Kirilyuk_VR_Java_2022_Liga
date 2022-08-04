@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.homework.tasktracker.exception.EntityNotFoundException;
 import ru.homework.tasktracker.mapper.TaskMapper;
+import ru.homework.tasktracker.model.dto.TaskCreateDto;
 import ru.homework.tasktracker.model.dto.TaskFullDto;
-import ru.homework.tasktracker.model.dto.TaskPostDto;
+import ru.homework.tasktracker.model.dto.TaskUpdateDto;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.filter.TaskFilter;
 import ru.homework.tasktracker.repository.TaskRepository;
@@ -14,7 +16,9 @@ import ru.homework.tasktracker.service.ProjectService;
 import ru.homework.tasktracker.service.TaskService;
 import ru.homework.tasktracker.service.UserService;
 
-import static ru.homework.tasktracker.mapper.TaskMapper.*;
+import javax.transaction.Transactional;
+
+import static java.lang.String.format;
 import static ru.homework.tasktracker.specification.TaskSpecification.generateSpecificationByTaskFilter;
 
 @Service
@@ -24,43 +28,48 @@ public class TaskServiceImpl implements TaskService {
     private final UserService userService;
     private final ProjectService projectService;
 
+    private final TaskMapper taskMapper;
+
     @Override
     public TaskFullDto findById(Long id) {
         Task task = findTaskById(id);
-        return taskToTaskFullDto(task);
+        return taskMapper.taskToTaskFullDto(task);
     }
 
     @Override
     public Page<TaskFullDto> findAll(TaskFilter taskFilter, Pageable pageable) {
-        Page<Task> tasks =  taskRepository.findAll(generateSpecificationByTaskFilter(taskFilter), pageable);
-        return tasks.map(TaskMapper::taskToTaskFullDto);
+        Page<Task> tasks = taskRepository.findAll(generateSpecificationByTaskFilter(taskFilter), pageable);
+        return tasks.map(taskMapper::taskToTaskFullDto);
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         Task task = this.findTaskById(id);
         taskRepository.delete(task);
     }
 
     @Override
-    public Long save(TaskPostDto taskPostDto) {
-        userService.findById(taskPostDto.getUserId());
-        projectService.findById(taskPostDto.getProjectId());
-        Task task = taskPostDtoToTask(taskPostDto);
-        return taskRepository.save(task).getId();
+    @Transactional
+    public TaskFullDto save(TaskCreateDto taskCreateDto) {
+        userService.findById(taskCreateDto.getUserId());
+        projectService.findById(taskCreateDto.getProjectId());
+        Task task = taskMapper.taskCreateDtoToTask(taskCreateDto);
+        return taskMapper.taskToTaskFullDto(taskRepository.save(task));
     }
 
     @Override
-    public void update(TaskPostDto taskPostDto, Long id) {
+    @Transactional
+    public TaskFullDto update(TaskUpdateDto taskUpdateDto, Long id) {
         Task task = this.findTaskById(id);
-        taskPostDtoMergeWithTask(taskPostDto, task);
+        taskMapper.taskUpdateDtoMergeWithTask(taskUpdateDto, task);
         userService.findById(task.getUser().getId());
         projectService.findById(task.getProject().getId());
-        taskRepository.save(task);
+        return taskMapper.taskToTaskFullDto(taskRepository.save(task));
     }
 
     private Task findTaskById(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Задачи с id %s не существует", id)));
+                .orElseThrow(() -> new EntityNotFoundException(format("Задачи с id %s не существует", id)));
     }
 }

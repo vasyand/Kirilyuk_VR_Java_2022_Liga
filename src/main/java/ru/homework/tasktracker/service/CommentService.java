@@ -11,9 +11,9 @@ public interface CommentService {
     CommentFullDto findById(Long id);
 
     Page<CommentFullDto> findAll(CommentFilter commentFilter, Pageable pageable);
-    Long save(CommentCreateDto commentCreateDto);
+    CommentFullDto save(CommentCreateDto commentCreateDto);
 
     void delete(Long id);
 
-    void update(CommentUpdateDto comment, Long id);
+    CommentFullDto update(CommentUpdateDto comment, Long id);
 }

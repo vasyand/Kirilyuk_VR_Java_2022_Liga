@@ -5,17 +5,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.homework.tasktracker.model.dto.TaskFullDto;
-import ru.homework.tasktracker.model.dto.TaskPostDto;
+import ru.homework.tasktracker.model.dto.TaskCreateDto;
+import ru.homework.tasktracker.model.dto.TaskUpdateDto;
 import ru.homework.tasktracker.model.filter.TaskFilter;
 import ru.homework.tasktracker.service.TaskService;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v2/tasks")
+@RequestMapping("api/v1/tasks")
 public class TaskController {
     private final TaskService taskService;
 
@@ -26,23 +28,27 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TaskFullDto>> findAll(@RequestBody TaskFilter taskFilter, Pageable pageable) {
+    public ResponseEntity<Page<TaskFullDto>> findAll(@RequestBody(required = false) TaskFilter taskFilter,
+                                                     Pageable pageable) {
         Page<TaskFullDto> tasks = taskService.findAll(taskFilter, pageable);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody TaskPostDto taskPostDto) {
-        Long id = taskService.save(taskPostDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<TaskFullDto> create(@RequestBody @Valid TaskCreateDto taskCreateDto) {
+        TaskFullDto taskFullDto = taskService.save(taskCreateDto);
+        return new ResponseEntity<>(taskFullDto, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody TaskPostDto taskPostDto, @PathVariable Long id) {
-        taskService.update(taskPostDto, id);
+    public ResponseEntity<?> update(@RequestBody TaskUpdateDto taskUpdateDto,
+                                    @PathVariable Long id) {
+        taskService.update(taskUpdateDto, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         taskService.delete(id);

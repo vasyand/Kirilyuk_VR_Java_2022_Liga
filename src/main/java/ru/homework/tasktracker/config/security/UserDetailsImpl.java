@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.security;
+package ru.homework.tasktracker.config.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,10 +13,15 @@ public class UserDetailsImpl implements UserDetails {
         this.userFullDto = userFullDto;
     }
 
+    public UserFullDto getUser() {
+        return userFullDto;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userFullDto.getRole().getPermissions();
     }
+
 
     @Override
     public String getPassword() {
@@ -30,17 +35,17 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.model.entity;
+package ru.homework.tasktracker.model;
 
 import lombok.Getter;
 

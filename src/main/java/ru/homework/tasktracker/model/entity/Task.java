@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import ru.homework.tasktracker.model.TaskStatus;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class Task {
     private Long id;
     private String title;
     private String description;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,7 +34,7 @@ public class Task {
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     @Fetch(FetchMode.JOIN)
     private List<Comment> comments;
-    private LocalDate date;
+
     @Enumerated(EnumType.STRING)
     private TaskStatus taskStatus;
 }

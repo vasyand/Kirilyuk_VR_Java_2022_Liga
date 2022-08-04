@@ -1,6 +1,7 @@
 package ru.homework.tasktracker.specification;
 
 import org.springframework.data.jpa.domain.Specification;
+import ru.homework.tasktracker.model.TaskStatus;
 import ru.homework.tasktracker.model.entity.*;
 import ru.homework.tasktracker.model.filter.UserFilter;
 
@@ -12,10 +13,14 @@ import static org.springframework.data.jpa.domain.Specification.*;
 public class UserSpecification {
 
     public static Specification<User> generateSpecificationByUserFilter(UserFilter userFilter) {
-        return where(filterByFirstName(userFilter.getFirstName()))
-                .and(filterByMiddleName(userFilter.getMiddleName()))
-                .and(filterByLastName(userFilter.getLastName()))
-                .and(filterByTask(userFilter));
+        return userFilter != null ?
+                where(filterByFirstName(userFilter.getFirstName()))
+                        .and(filterByMiddleName(userFilter.getMiddleName()))
+                        .and(filterByLastName(userFilter.getLastName()))
+                        .and(filterByTask(userFilter))
+                :
+                where(null);
+
     }
 
     private static Specification<User> filterByFirstName(String firstName) {

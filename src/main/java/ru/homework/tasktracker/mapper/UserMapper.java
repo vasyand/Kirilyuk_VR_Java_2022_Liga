@@ -1,51 +1,29 @@
 package ru.homework.tasktracker.mapper;
 
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import ru.homework.tasktracker.model.dto.UserCreateDto;
 import ru.homework.tasktracker.model.dto.UserFullDto;
 import ru.homework.tasktracker.model.dto.UserUpdateDto;
 import ru.homework.tasktracker.model.entity.User;
 
-import java.util.stream.Collectors;
+import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
+import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-import static ru.homework.tasktracker.model.entity.Role.USER;
+@Mapper(componentModel = SPRING, uses = {
+        CommentMapper.class,
+        TaskMapper.class
+})
+public interface UserMapper {
+    UserFullDto userToUserFullDto(User user);
 
-public class UserMapper {
-    public static UserFullDto userToUserFullDto(User user){
-        UserFullDto userFullDto = new UserFullDto();
-        userFullDto.setId(userFullDto.getId());
-        userFullDto.setEmail(userFullDto.getEmail());
-        userFullDto.setPassword(userFullDto.getPassword());
-        userFullDto.setFirstName(userFullDto.getFirstName());
-        userFullDto.setMiddleName(userFullDto.getMiddleName());
-        userFullDto.setLastName(userFullDto.getLastName());
-        userFullDto.setRole(user.getRole());
-        userFullDto.setTasks(user.getTasks().stream()
-                .map(TaskMapper::taskToTaskFullDto)
-                .collect(Collectors.toList()));
-        userFullDto.setProjects(user.getProjects().stream()
-                .map(ProjectMapper::projectToProjectFullDto)
-                .collect(Collectors.toList()));
-        return userFullDto;
-    }
-    public static User userCreateDtoToUser(UserCreateDto userCreateDto){
-        User user = new User();
-        user.setEmail(userCreateDto.getEmail());
-        user.setPassword(userCreateDto.getPassword());
-        user.setFirstName(userCreateDto.getFirstName());
-        user.setMiddleName(userCreateDto.getMiddleName());
-        user.setLastName(userCreateDto.getLastName());
-        user.setRole(USER);
-        return user;
-    }
-    public static void userUpdateDtoMergeWithUser(UserUpdateDto userUpdateDto, User user){
-        if (userUpdateDto.getFirstName() != null) {
-            user.setFirstName(user.getFirstName());
-        }
-        if (userUpdateDto.getMiddleName() != null) {
-            user.setMiddleName(userUpdateDto.getMiddleName());
-        }
-        if (userUpdateDto.getLastName() != null) {
-            user.setLastName(userUpdateDto.getLastName());
-        }
-    }
+    User userCreateDtoToUser(UserCreateDto userCreateDto);
+
+    @Mapping(target = "firstName", nullValuePropertyMappingStrategy = IGNORE)
+    @Mapping(target = "middleName", nullValuePropertyMappingStrategy = IGNORE)
+    @Mapping(target = "lastName", nullValuePropertyMappingStrategy = IGNORE)
+    User userUpdateDtoMergeWithUser(UserUpdateDto userUpdateDto, @MappingTarget User user);
+
 }

@@ -7,13 +7,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.homework.tasktracker.model.dto.ProjectFullDto;
-import ru.homework.tasktracker.model.dto.ProjectPostDto;
+import ru.homework.tasktracker.model.dto.ProjectCreateDto;
+import ru.homework.tasktracker.model.dto.ProjectUpdateDto;
 import ru.homework.tasktracker.model.filter.ProjectFilter;
 import ru.homework.tasktracker.service.ProjectService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v2/projects")
+@RequestMapping("api/v1/projects")
 public class ProjectController {
     private final ProjectService projectService;
 
@@ -24,23 +27,23 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProjectFullDto>> findAll(@RequestBody ProjectFilter projectFilter,
+    public ResponseEntity<Page<ProjectFullDto>> findAll(@RequestBody(required = false) ProjectFilter projectFilter,
                                                         Pageable pageable) {
         Page<ProjectFullDto> projects = projectService.findAll(projectFilter, pageable);
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody ProjectPostDto projectPostDto) {
-        Long id = projectService.save(projectPostDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<ProjectFullDto> create(@RequestBody @Valid ProjectCreateDto projectCreateDto) {
+        ProjectFullDto projectFullDto = projectService.save(projectCreateDto);
+        return new ResponseEntity<>(projectFullDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,
-                                         @RequestBody ProjectPostDto projectPostDto) {
-        projectService.update(projectPostDto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ProjectFullDto> update(@PathVariable Long id,
+                                    @RequestBody ProjectUpdateDto projectUpdateDto) {
+        ProjectFullDto projectFullDto = projectService.update(projectUpdateDto, id);
+        return new ResponseEntity<>(projectFullDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

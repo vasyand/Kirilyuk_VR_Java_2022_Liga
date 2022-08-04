@@ -1,20 +1,20 @@
 package ru.homework.tasktracker.model.dto;
 
 import lombok.Getter;
-import lombok.Setter;
-import ru.homework.tasktracker.model.TaskStatus;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.List;
+
 @Getter
-@Setter
-public class TaskFullDto {
-    private Long id;
+public class TaskCreateDto {
+    @NotBlank
     private String title;
+    @NotBlank
     private String description;
+    @NotBlank
     private Long userId;
+    @NotBlank
     private Long projectId;
-    private List<CommentFullDto> comments;
+    @NotBlank
     private LocalDate date;
-    private TaskStatus taskStatus;
 }

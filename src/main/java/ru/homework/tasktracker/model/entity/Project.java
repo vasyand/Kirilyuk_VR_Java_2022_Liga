@@ -6,6 +6,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,5 +26,5 @@ public class Project {
     private List<Task> tasks;
 
     @ManyToMany(mappedBy = "projects")
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 }

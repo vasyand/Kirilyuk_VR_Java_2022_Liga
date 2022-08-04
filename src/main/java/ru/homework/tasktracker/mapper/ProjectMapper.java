@@ -1,39 +1,23 @@
 package ru.homework.tasktracker.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import ru.homework.tasktracker.model.dto.ProjectCreateDto;
 import ru.homework.tasktracker.model.dto.ProjectFullDto;
-import ru.homework.tasktracker.model.dto.ProjectPostDto;
+import ru.homework.tasktracker.model.dto.ProjectUpdateDto;
 import ru.homework.tasktracker.model.entity.Project;
 
-import java.util.stream.Collectors;
+import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
+import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-public class ProjectMapper {
-    public static ProjectFullDto projectToProjectFullDto(Project project) {
-        ProjectFullDto projectFullDto = new ProjectFullDto();
-        projectFullDto.setId(project.getId());
-        projectFullDto.setTitle(project.getTitle());
-        projectFullDto.setDescription(projectFullDto.getDescription());
-        projectFullDto.setTasks(project.getTasks().stream()
-                .map(TaskMapper::taskToTaskFullDto)
-                .collect(Collectors.toList()));
-        projectFullDto.setUsers(project.getUsers().stream()
-                .map(UserMapper::userToUserFullDto)
-                .collect(Collectors.toList()));
-        return projectFullDto;
-    }
+@Mapper(componentModel = SPRING, uses = TaskMapper.class)
+public interface ProjectMapper {
+    ProjectFullDto projectToProjectFullDto(Project project);
 
-    public static Project projectPostDtoToProject(ProjectPostDto projectPostDto) {
-        Project project = new Project();
-        project.setTitle(projectPostDto.getTitle());
-        project.setDescription(projectPostDto.getTitle());
-        return project;
-    }
+    Project projectPostDtoToProject(ProjectCreateDto projectCreateDto);
 
-    public static void projectPostDtoMergeWithProject(ProjectPostDto projectPostDto, Project project) {
-        if (projectPostDto.getDescription() != null ) {
-            project.setDescription(projectPostDto.getDescription());
-        }
-        if (projectPostDto.getTitle() != null) {
-            project.setTitle(projectPostDto.getTitle());
-        }
-    }
+    @Mapping(target = "description", nullValuePropertyMappingStrategy = IGNORE)
+    @Mapping(target = "title", nullValuePropertyMappingStrategy = IGNORE)
+    Project projectUpdateDtoMergeWithProject(ProjectUpdateDto projectUpdateDto, @MappingTarget Project project);
 }

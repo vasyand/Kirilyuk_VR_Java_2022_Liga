@@ -12,5 +12,4 @@ public class ProjectFullDto {
     private String title;
     private String description;
     private List<TaskFullDto> tasks;
-    private List<UserFullDto> users;
 }
