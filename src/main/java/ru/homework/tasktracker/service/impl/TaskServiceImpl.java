@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.homework.tasktracker.exception.EntityNotFoundException;
 import ru.homework.tasktracker.mapper.TaskMapper;
-import ru.homework.tasktracker.model.dto.TaskFullDto;
 import ru.homework.tasktracker.model.dto.TaskCreateDto;
+import ru.homework.tasktracker.model.dto.TaskFullDto;
 import ru.homework.tasktracker.model.dto.TaskUpdateDto;
 import ru.homework.tasktracker.model.entity.Task;
 import ru.homework.tasktracker.model.filter.TaskFilter;
@@ -18,8 +18,7 @@ import ru.homework.tasktracker.service.UserService;
 
 import javax.transaction.Transactional;
 
-import static java.lang.String.*;
-import static ru.homework.tasktracker.mapper.TaskMapper.*;
+import static java.lang.String.format;
 import static ru.homework.tasktracker.specification.TaskSpecification.generateSpecificationByTaskFilter;
 
 @Service
@@ -29,23 +28,18 @@ public class TaskServiceImpl implements TaskService {
     private final UserService userService;
     private final ProjectService projectService;
 
+    private final TaskMapper taskMapper;
+
     @Override
-    @Transactional
     public TaskFullDto findById(Long id) {
         Task task = findTaskById(id);
-        return taskToTaskFullDto(task);
+        return taskMapper.taskToTaskFullDto(task);
     }
 
     @Override
-    @Transactional
     public Page<TaskFullDto> findAll(TaskFilter taskFilter, Pageable pageable) {
-        Page<Task> tasks;
-        if (taskFilter != null) {
-            tasks = taskRepository.findAll(generateSpecificationByTaskFilter(taskFilter), pageable);
-        } else {
-            tasks = taskRepository.findAll(pageable);
-        }
-        return tasks.map(TaskMapper::taskToTaskFullDto);
+        Page<Task> tasks = taskRepository.findAll(generateSpecificationByTaskFilter(taskFilter), pageable);
+        return tasks.map(taskMapper::taskToTaskFullDto);
     }
 
     @Override
@@ -57,21 +51,21 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Long save(TaskCreateDto taskCreateDto) {
+    public TaskFullDto save(TaskCreateDto taskCreateDto) {
         userService.findById(taskCreateDto.getUserId());
         projectService.findById(taskCreateDto.getProjectId());
-        Task task = taskPostDtoToTask(taskCreateDto);
-        return taskRepository.save(task).getId();
+        Task task = taskMapper.taskCreateDtoToTask(taskCreateDto);
+        return taskMapper.taskToTaskFullDto(taskRepository.save(task));
     }
 
     @Override
     @Transactional
-    public void update(TaskUpdateDto taskUpdateDto, Long id) {
+    public TaskFullDto update(TaskUpdateDto taskUpdateDto, Long id) {
         Task task = this.findTaskById(id);
-        taskPostDtoMergeWithTask(taskUpdateDto, task);
+        taskMapper.taskUpdateDtoMergeWithTask(taskUpdateDto, task);
         userService.findById(task.getUser().getId());
         projectService.findById(task.getProject().getId());
-        taskRepository.save(task);
+        return taskMapper.taskToTaskFullDto(taskRepository.save(task));
     }
 
     private Task findTaskById(Long id) {

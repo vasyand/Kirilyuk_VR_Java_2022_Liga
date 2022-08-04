@@ -35,20 +35,20 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid CommentCreateDto commentCreateDto) {
-        Long id = commentService.save(commentCreateDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<CommentFullDto> create(@RequestBody @Valid CommentCreateDto commentCreateDto) {
+        CommentFullDto commentFullDto = commentService.save(commentCreateDto);
+        return new ResponseEntity<>(commentFullDto, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestBody CommentUpdateDto commentUpdateDto) {
-        commentService.update(commentUpdateDto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<CommentFullDto> update(@PathVariable Long id,
+                                                 @RequestBody CommentUpdateDto commentUpdateDto) {
+        CommentFullDto commentFullDto = commentService.update(commentUpdateDto, id);
+        return new ResponseEntity<>(commentFullDto, HttpStatus.OK);
     }
 
-    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         commentService.delete(id);

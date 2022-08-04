@@ -34,16 +34,16 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid ProjectCreateDto projectCreateDto) {
-        Long id = projectService.save(projectCreateDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<ProjectFullDto> create(@RequestBody @Valid ProjectCreateDto projectCreateDto) {
+        ProjectFullDto projectFullDto = projectService.save(projectCreateDto);
+        return new ResponseEntity<>(projectFullDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,
+    public ResponseEntity<ProjectFullDto> update(@PathVariable Long id,
                                     @RequestBody ProjectUpdateDto projectUpdateDto) {
-        projectService.update(projectUpdateDto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ProjectFullDto projectFullDto = projectService.update(projectUpdateDto, id);
+        return new ResponseEntity<>(projectFullDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

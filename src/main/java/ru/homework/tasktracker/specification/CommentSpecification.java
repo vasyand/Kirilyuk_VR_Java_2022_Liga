@@ -10,8 +10,11 @@ import static org.springframework.data.jpa.domain.Specification.where;
 public class CommentSpecification {
 
     public static Specification<Comment> generateSpecificationByCommentFilter(CommentFilter commentFilter) {
-        return where(filterByMessage(commentFilter.getMessage()))
-                .and(filterByTaskId(commentFilter.getTaskId()));
+        return commentFilter != null ?
+                where(filterByMessage(commentFilter.getMessage()))
+                        .and(filterByTaskId(commentFilter.getTaskId()))
+                :
+                where(null);
     }
 
     private static Specification<Comment> filterByMessage(String message) {

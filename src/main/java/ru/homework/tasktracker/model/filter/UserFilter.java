@@ -1,7 +1,7 @@
 package ru.homework.tasktracker.model.filter;
 
 import lombok.Getter;
-import ru.homework.tasktracker.model.entity.TaskStatus;
+import ru.homework.tasktracker.model.TaskStatus;
 
 import java.time.LocalDate;
 

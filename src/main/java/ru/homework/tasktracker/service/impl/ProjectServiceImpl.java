@@ -6,8 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.homework.tasktracker.exception.EntityNotFoundException;
 import ru.homework.tasktracker.mapper.ProjectMapper;
-import ru.homework.tasktracker.model.dto.ProjectFullDto;
 import ru.homework.tasktracker.model.dto.ProjectCreateDto;
+import ru.homework.tasktracker.model.dto.ProjectFullDto;
 import ru.homework.tasktracker.model.dto.ProjectUpdateDto;
 import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.filter.ProjectFilter;
@@ -16,39 +16,31 @@ import ru.homework.tasktracker.service.ProjectService;
 
 import javax.transaction.Transactional;
 
-import static java.lang.String.*;
-import static ru.homework.tasktracker.mapper.ProjectMapper.*;
+import static java.lang.String.format;
 import static ru.homework.tasktracker.specification.ProjectSpecification.generateSpecificationByProjectFilter;
 
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
+    private final ProjectMapper projectMapper;
 
     @Override
-    @Transactional
     public ProjectFullDto findById(Long id) {
         Project project = this.findProjectById(id);
-        return projectToProjectFullDto(project);
+        return projectMapper.projectToProjectFullDto(project);
     }
 
     @Override
-    @Transactional
     public Page<ProjectFullDto> findAll(ProjectFilter projectFilter, Pageable pageable) {
-        Page<Project> projects;
-        if (projectFilter != null) {
-            projects = projectRepository.findAll(generateSpecificationByProjectFilter(projectFilter), pageable);
-        } else {
-            projects = projectRepository.findAll(pageable);
-        }
-        return projects.map(ProjectMapper::projectToProjectFullDto);
+        Page<Project> projects = projectRepository.findAll(generateSpecificationByProjectFilter(projectFilter), pageable);
+        return projects.map(projectMapper::projectToProjectFullDto);
     }
 
     @Override
-    @Transactional
-    public Long save(ProjectCreateDto projectCreateDto) {
-       Project project = projectPostDtoToProject(projectCreateDto);
-       return projectRepository.save(project).getId();
+    public ProjectFullDto save(ProjectCreateDto projectCreateDto) {
+       Project project = projectMapper.projectPostDtoToProject(projectCreateDto);
+       return projectMapper.projectToProjectFullDto(projectRepository.save(project));
     }
 
     @Override
@@ -60,10 +52,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void update(ProjectUpdateDto projectUpdateDto, Long id) {
+    public ProjectFullDto update(ProjectUpdateDto projectUpdateDto, Long id) {
         Project project = this.findProjectById(id);
-        projectPostDtoMergeWithProject(projectUpdateDto, project);
-        projectRepository.save(project);
+        projectMapper.projectUpdateDtoMergeWithProject(projectUpdateDto, project);
+        return projectMapper.projectToProjectFullDto(projectRepository.save(project));
     }
 
     private Project findProjectById(Long id) {

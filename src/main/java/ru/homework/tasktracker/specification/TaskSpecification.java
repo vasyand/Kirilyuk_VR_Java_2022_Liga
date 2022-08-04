@@ -2,7 +2,7 @@ package ru.homework.tasktracker.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 import ru.homework.tasktracker.model.entity.Task;
-import ru.homework.tasktracker.model.entity.TaskStatus;
+import ru.homework.tasktracker.model.TaskStatus;
 import ru.homework.tasktracker.model.entity.Task_;
 import ru.homework.tasktracker.model.filter.TaskFilter;
 
@@ -13,12 +13,15 @@ import static org.springframework.data.jpa.domain.Specification.where;
 public class TaskSpecification {
 
     public static Specification<Task> generateSpecificationByTaskFilter(TaskFilter taskFilter) {
-        return where(filterByTitle(taskFilter.getTitle()))
-                .and(filterByDescription(taskFilter.getDescription()))
-                .and(filterByUserId(taskFilter.getUserId()))
-                .and(filterByProjectId(taskFilter.getProjectId()))
-                .and(filterByStatus(taskFilter.getTaskStatus()))
-                .and(filterByDates(taskFilter.getFrom(), taskFilter.getTo()));
+        return taskFilter != null ?
+                where(filterByTitle(taskFilter.getTitle()))
+                        .and(filterByDescription(taskFilter.getDescription()))
+                        .and(filterByUserId(taskFilter.getUserId()))
+                        .and(filterByProjectId(taskFilter.getProjectId()))
+                        .and(filterByStatus(taskFilter.getTaskStatus()))
+                        .and(filterByDates(taskFilter.getFrom(), taskFilter.getTo()))
+                :
+                where(null);
     }
 
     private static Specification<Task> filterByTitle(String title) {

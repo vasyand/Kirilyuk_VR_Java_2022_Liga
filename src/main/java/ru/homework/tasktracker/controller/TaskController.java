@@ -35,12 +35,12 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid TaskCreateDto taskCreateDto) {
-        Long id = taskService.save(taskCreateDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<TaskFullDto> create(@RequestBody @Valid TaskCreateDto taskCreateDto) {
+        TaskFullDto taskFullDto = taskService.save(taskCreateDto);
+        return new ResponseEntity<>(taskFullDto, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody TaskUpdateDto taskUpdateDto,
                                     @PathVariable Long id) {
@@ -48,7 +48,7 @@ public class TaskController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("@authorizeValidator.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         taskService.delete(id);

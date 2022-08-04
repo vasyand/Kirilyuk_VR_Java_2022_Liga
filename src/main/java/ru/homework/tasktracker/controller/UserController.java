@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody @Valid UserCreateDto userCreateDto) {
-        Long id = userService.save(userCreateDto);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+    public ResponseEntity<UserFullDto> create(@RequestBody @Valid UserCreateDto userCreateDto) {
+        UserFullDto userFullDto = userService.save(userCreateDto);
+        return new ResponseEntity<>(userFullDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/projects")
@@ -46,9 +46,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id) {
-        userService.update(userUpdateDto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<UserFullDto> update(@RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id) {
+        UserFullDto userFullDto = userService.update(userUpdateDto, id);
+        return new ResponseEntity<>(userFullDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

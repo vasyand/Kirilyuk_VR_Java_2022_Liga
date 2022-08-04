@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.security;
+package ru.homework.tasktracker.config.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

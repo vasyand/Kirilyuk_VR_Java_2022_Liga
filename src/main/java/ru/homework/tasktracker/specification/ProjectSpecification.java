@@ -10,8 +10,11 @@ import static org.springframework.data.jpa.domain.Specification.where;
 public class ProjectSpecification {
 
     public static Specification<Project> generateSpecificationByProjectFilter(ProjectFilter projectFilter) {
-        return where(filterByTitle(projectFilter.getTitle()))
-                .and(filterByDescription(projectFilter.getDescription()));
+        return projectFilter != null ?
+                where(filterByTitle(projectFilter.getTitle()))
+                        .and(filterByDescription(projectFilter.getDescription()))
+                :
+                where(null);
     }
 
     private static Specification<Project> filterByTitle(String title) {

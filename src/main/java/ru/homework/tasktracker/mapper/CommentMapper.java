@@ -1,32 +1,29 @@
 package ru.homework.tasktracker.mapper;
 
+import org.mapstruct.*;
 import ru.homework.tasktracker.model.dto.CommentCreateDto;
 import ru.homework.tasktracker.model.dto.CommentFullDto;
 import ru.homework.tasktracker.model.dto.CommentUpdateDto;
 import ru.homework.tasktracker.model.entity.Comment;
 import ru.homework.tasktracker.model.entity.Task;
 
-public class CommentMapper {
-    public static CommentFullDto commentToCommentFullDto(Comment comment) {
-        CommentFullDto commentFullDto = new CommentFullDto();
-        commentFullDto.setId(comment.getId());
-        commentFullDto.setMessage(comment.getMessage());
-        commentFullDto.setTaskId(comment.getTask().getId());
-        return commentFullDto;
-    }
+import static org.mapstruct.MappingConstants.ComponentModel.*;
+import static org.mapstruct.NullValuePropertyMappingStrategy.*;
 
-    public static Comment commentCreateDtoToComment(CommentCreateDto commentCreateDto) {
-        Comment comment = new Comment();
+@Mapper(componentModel = SPRING)
+public interface CommentMapper {
+    @Mapping(target = "taskId", source = "comment.task.id")
+    CommentFullDto commentToCommentFullDto(Comment comment);
+    @Mapping(target = "task", source = "commentCreateDto.taskId", qualifiedByName = "getTaskWithId")
+    Comment commentCreateDtoToComment(CommentCreateDto commentCreateDto);
+
+    @Mapping(target = "message", nullValuePropertyMappingStrategy = IGNORE)
+    Comment commentUpdateDtoMergeWithComment(CommentUpdateDto commentUpdateDto, @MappingTarget Comment comment);
+
+    @Named("getTaskWithId")
+    static Task getTaskWithId(Long id) {
         Task task = new Task();
-        task.setId(commentCreateDto.getTaskId());
-        comment.setTask(task);
-        comment.setMessage(commentCreateDto.getMessage());
-        return comment;
-    }
-
-    public static void commentUpdateDtoMergeWithComment(CommentUpdateDto commentUpdateDto, Comment comment) {
-        if (commentUpdateDto.getMessage() != null) {
-            comment.setMessage(commentUpdateDto.getMessage());
-        }
+        task.setId(id);
+        return task;
     }
 }

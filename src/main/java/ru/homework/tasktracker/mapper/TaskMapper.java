@@ -1,67 +1,51 @@
 package ru.homework.tasktracker.mapper;
 
-import ru.homework.tasktracker.model.dto.TaskFullDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import ru.homework.tasktracker.model.dto.TaskCreateDto;
+import ru.homework.tasktracker.model.dto.TaskFullDto;
 import ru.homework.tasktracker.model.dto.TaskUpdateDto;
 import ru.homework.tasktracker.model.entity.Project;
 import ru.homework.tasktracker.model.entity.Task;
-import ru.homework.tasktracker.model.entity.TaskStatus;
 import ru.homework.tasktracker.model.entity.User;
 
-import java.util.stream.Collectors;
+import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
+import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-import static ru.homework.tasktracker.model.entity.TaskStatus.*;
+@Mapper(componentModel = SPRING, uses = CommentMapper.class)
+public interface TaskMapper {
+    @Mapping(target = "userId", source = "task.user.id")
+    @Mapping(target = "projectId", source = "task.project.id")
+    TaskFullDto taskToTaskFullDto(Task task);
 
-public class TaskMapper {
-    public static TaskFullDto taskToTaskFullDto(Task task) {
-        TaskFullDto taskFullDto = new TaskFullDto();
-        taskFullDto.setId(task.getId());
-        taskFullDto.setDescription(task.getDescription());
-        taskFullDto.setTitle(task.getTitle());
-        taskFullDto.setProjectId(task.getProject().getId());
-        taskFullDto.setUserId(task.getUser().getId());
-        taskFullDto.setDate(task.getDate());
-        taskFullDto.setTaskStatus(task.getTaskStatus());
-        taskFullDto.setComments(task.getComments().stream()
-                .map(CommentMapper::commentToCommentFullDto)
-                .collect(Collectors.toList()));
-        return taskFullDto;
-    }
+    @Mapping(target = "project", source = "projectId", qualifiedByName = "getProjectWithId")
+    @Mapping(target = "user", source = "userId", qualifiedByName = "getUserWithId")
+    Task taskCreateDtoToTask(TaskCreateDto taskCreateDto);
 
-    public static Task taskPostDtoToTask(TaskCreateDto taskCreateDto) {
-        Task task = new Task();
-        task.setTitle(taskCreateDto.getTitle());
-        task.setDescription(taskCreateDto.getDescription());
-        task.setDate(taskCreateDto.getDate());
-        task.setTaskStatus(CREATED);
-        User user = new User();
-        user.setId(taskCreateDto.getUserId());
-        task.setUser(user);
+    @Mapping(target = "project", source = "projectId",
+            qualifiedByName = "getProjectWithId", nullValuePropertyMappingStrategy = IGNORE)
+    @Mapping(target = "user", source = "userId",
+            qualifiedByName = "getUserWithId", nullValuePropertyMappingStrategy = IGNORE)
+    @Mapping(target = "title", nullValuePropertyMappingStrategy = IGNORE)
+    @Mapping(target = "description", nullValuePropertyMappingStrategy = IGNORE)
+    @Mapping(target = "date", nullValuePropertyMappingStrategy = IGNORE)
+    Task taskUpdateDtoMergeWithTask(TaskUpdateDto taskUpdateDto, @MappingTarget Task task);
+
+    @Named("getProjectWithId")
+    static Project getProjectWithId(Long id) {
         Project project = new Project();
-        project.setId(taskCreateDto.getProjectId());
-        task.setProject(project);
-        return task;
+        project.setId(id);
+        return project;
     }
 
-    public static void taskPostDtoMergeWithTask(TaskUpdateDto taskUpdateDto, Task task) {
-        if (taskUpdateDto.getTitle() != null) {
-            task.setTitle(taskUpdateDto.getTitle());
-        }
-        if (taskUpdateDto.getDescription() != null) {
-            task.setDescription(taskUpdateDto.getDescription());
-        }
-        if (taskUpdateDto.getDate() != null) {
-            task.setDate(taskUpdateDto.getDate());
-        }
-        if (taskUpdateDto.getUserId() != null) {
-            User user = new User();
-            user.setId(taskUpdateDto.getUserId());
-            task.setUser(user);
-        }
-        if (taskUpdateDto.getProjectId() != null) {
-            Project project = new Project();
-            project.setId(taskUpdateDto.getProjectId());
-            task.setProject(project);
-        }
+    @Named("getUserWithId")
+    static User getUserWithId(Long id) {
+        User user = new User();
+        user.setId(id);
+        return user;
     }
+
+
 }

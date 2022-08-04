@@ -2,7 +2,7 @@ package ru.homework.tasktracker.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.homework.tasktracker.model.entity.Role;
+import ru.homework.tasktracker.model.Role;
 
 import java.util.List;
 

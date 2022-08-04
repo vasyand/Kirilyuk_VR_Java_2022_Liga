@@ -1,7 +1,7 @@
 package ru.homework.tasktracker.model.dto;
 
 import lombok.Getter;
-import ru.homework.tasktracker.model.entity.TaskStatus;
+import ru.homework.tasktracker.model.TaskStatus;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.model.entity;
+package ru.homework.tasktracker.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
