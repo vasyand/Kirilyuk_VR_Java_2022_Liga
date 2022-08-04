@@ -17,5 +17,4 @@ public class UserFullDto {
     private String password;
     private Role role;
     private List<TaskFullDto> tasks;
-    private List<ProjectFullDto> projects;
 }

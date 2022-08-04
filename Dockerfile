@@ -8,5 +8,5 @@ FROM openjdk:17
 
 COPY --from=build app/build/libs/*.jar task-tracker.jar
 
-EXPOSE 80
+EXPOSE 8080
 CMD exec java -jar task-tracker.jar

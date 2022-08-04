@@ -18,3 +18,7 @@ spring:
     password: test
     user: test
 
+
+secret-key: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+access-token-expiration-days: 1
+refresh-token-expiration-weeks: 4

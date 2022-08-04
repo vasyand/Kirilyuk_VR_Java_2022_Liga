@@ -13,7 +13,7 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
 @Mapper(componentModel = SPRING, uses = {
-        CommentMapper.class,
+        ProjectMapper.class,
         TaskMapper.class
 })
 public interface UserMapper {
