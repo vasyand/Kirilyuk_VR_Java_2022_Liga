@@ -57,7 +57,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,
                         "/api/v1/users/**",
                         "/api/v1/projects/**",
-                        "/api/v1/comments/**")
+                        "/api/v1/comments/**",
+                        "/api/v1/refresh-token")
                 .hasAnyRole(USER.name(), ADMIN.name())
                 .and()
                 .authorizeRequests()
