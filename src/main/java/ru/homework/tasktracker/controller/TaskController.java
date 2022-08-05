@@ -40,7 +40,7 @@ public class TaskController {
         return new ResponseEntity<>(taskFullDto, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@userValidator.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody TaskUpdateDto taskUpdateDto,
                                     @PathVariable Long id) {
@@ -48,7 +48,7 @@ public class TaskController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@userValidator.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         taskService.delete(id);

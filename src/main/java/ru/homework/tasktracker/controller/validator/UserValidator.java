@@ -1,4 +1,4 @@
-package ru.homework.tasktracker.controller.authorizer;
+package ru.homework.tasktracker.controller.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -10,7 +10,7 @@ import ru.homework.tasktracker.service.TaskService;
 
 @Component
 @RequiredArgsConstructor
-public class TaskAuthorizer {
+public class UserValidator {
     private final TaskService taskService;
 
     public boolean thisTaskBelongToUser(Long id) {

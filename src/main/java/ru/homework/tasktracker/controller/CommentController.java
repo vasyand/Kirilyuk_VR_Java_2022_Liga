@@ -40,7 +40,7 @@ public class CommentController {
         return new ResponseEntity<>(commentFullDto, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@userValidator.thisTaskBelongToUser(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<CommentFullDto> update(@PathVariable Long id,
                                                  @RequestBody CommentUpdateDto commentUpdateDto) {
@@ -48,7 +48,7 @@ public class CommentController {
         return new ResponseEntity<>(commentFullDto, HttpStatus.OK);
     }
 
-    @PreAuthorize("@taskAuthorizer.thisTaskBelongToUser(#id)")
+    @PreAuthorize("@userValidator.thisTaskBelongToUser(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         commentService.delete(id);
